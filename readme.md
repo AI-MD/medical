@@ -12,6 +12,6 @@ two Classification models
 
 case1. when the model'inference progress, 1 model before 2 model ( 1 model class threshold 1. 0.5 2. 0.5 3. 0.5)
 case2. 
-case3. only 2 model progress 
+case3. only 2 model progress  accuracy 92.43%
 
 test
