@@ -1,0 +1,58 @@
+{
+    "name": "EfficientNet_b5_ns_sam",
+    "n_gpu": 4,
+    "use_amp": false,
+
+    "arch": {
+        "type": "Model",
+        "args": {
+            "model": "tf_efficientnet_b5_ns",
+            "pretrained": true, 
+            "num_classes": 3
+        }
+    },
+    "data_loader": {
+        "type": "NoisyDataSigmoidLoader",
+        "args":{
+            "data_dir": "/dataset/capsule_noisy/",
+            "batch_size": 64,
+            "size": [456, 456],
+            "shuffle": true,
+            "validation_split": 0.1,
+            "num_workers": 4,
+            "training" : true,
+            "classes" : [0, 1, 2]
+        }
+    },
+    "optimizer": {
+        "type": "SAM",
+        "args":{
+            "lr": 0.01,
+            "momentum": 0.9
+        }
+    },
+    "loss": "smooth_multilabel_loss",
+
+    "metrics": [
+        "accuracy"
+    ],
+    "lr_scheduler": {
+        "type": "StepLR",
+        "args": {
+            "step_size": 50,
+            "gamma": 0.1
+        }
+    },
+    "trainer": {
+        "epochs": 50,
+
+        "save_dir": "saved/",
+        "save_period": 1,
+        "verbosity": 2,
+        
+        "monitor": "min val_loss",
+        "early_stop": -1,
+
+        "tensorboard": false
+    }
+}
