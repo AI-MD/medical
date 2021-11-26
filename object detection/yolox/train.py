@@ -16,7 +16,7 @@ import torch.nn as nn
 
 from config import opt
 from data.dataset import get_dataloader
-from models.yolox import get_model
+from models.yolox_test import get_model
 from models.post_process import yolox_post_process
 from utils.lr_scheduler import LRScheduler
 from utils.util import AverageMeter, write_log, configure_module, occupy_mem
