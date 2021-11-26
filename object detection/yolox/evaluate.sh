@@ -19,7 +19,9 @@
 #python evaluate.py gpus='0' backbone="CSPDarknet-x" load_model="../weights/yolox-x.pth" dataset_path="/data/dataset/coco_dataset" test_ann="/data/dataset/coco_dataset/annotations/image_info_test-dev2017.json" test_size="(800,800)"
 
 # evaluate customer dataset
-python evaluate.py gpus='0' backbone="CSPDarknet-s" load_model="exp/coco_CSPDarknet-s_640x640/model_best.pth" batch_size=24
+#python evaluate.py gpus='0' backbone="CSPDarknet-s" load_model="exp/coco_CSPDarknet-s_640x640/model_best.pth" batch_size=24
+python3 evaluate.py gpus='0' backbone="CSPDarknet-s" load_model="exp/facect_CSPDarknet-s_640x640/model_best.pth" img_dir='./data/dataset/facial_ct_dataset/images/val/'
+
 
 # fuse BN into Conv to speed up
 #python evaluate.py gpus='0' backbone="CSPDarknet-s" load_model="exp/coco_CSPDarknet-s_640x640/model_best.pth" batch_size=24 fuse=True

@@ -92,8 +92,9 @@ if opt.backbone.lower().split("-")[1] in ["tiny", "nano"]:
     opt = update_nano_tiny(opt, input_params)
 
 # do not modify the following params
-opt.train_ann = opt.dataset_path + "/annotations/train_G3_51_740.json"
-opt.val_ann = opt.dataset_path + "/annotations/val_G3_0_50.json"
+#opt.train_ann = opt.dataset_path + "/annotations/train_G3_51_740.json"
+opt.train_ann = opt.dataset_path + "/annotations/dcm_G3_0_50.json"
+opt.val_ann = opt.dataset_path + "/annotations/dcm_G3_0_50.json"
 opt.data_dir = opt.dataset_path + "/images"
 if isinstance(opt.label_name, str):
     new_label = opt.label_name.split(",")

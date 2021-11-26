@@ -83,8 +83,9 @@ def evaluate():
 
     coco_det = coco.loadRes(result_file)
     coco_eval = COCOeval(coco, coco_det, 'bbox')
-    #coco_eval.params.iouThrs = np.linspace(0.05, 0.5, int(np.round((0.5-.05)/.05)) + 1, endpoint=True)
+    # hyperparamter
     coco_eval.params.iouThrs = [0.5]
+    
     coco_eval.evaluate()
     coco_eval.accumulate()
     coco_eval.summarize()
