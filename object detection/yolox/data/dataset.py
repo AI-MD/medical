@@ -487,7 +487,7 @@ class DICOMDataset(torch.utils.data.Dataset):
 
         if(('RescaleSlope' in ds) and ('RescaleIntercept' in ds)):
             pixel_array = (pixel_array * ds.RescaleSlope) + ds.RescaleIntercept
-        '''
+        
         if('WindowCenter' in ds):
             if(type(ds.WindowCenter) == pydicom.multival.MultiValue):
                 window_center = float(ds.WindowCenter[0])
@@ -506,9 +506,11 @@ class DICOMDataset(torch.utils.data.Dataset):
         pixel_array[np.where(pixel_array < lwin)] = lwin
         pixel_array[np.where(pixel_array > rwin)] = rwin
         pixel_array = pixel_array - lwin
-        '''
+
         if(ds.PhotometricInterpretation == 'MONOCHROME1'):
             pixel_array = 1.0 - pixel_array
+
+        pixel_array = pixel_array / (rwin - lwin) * 255
 
         #img = cv2.imread(img_file)
         assert pixel_array is not None, "error img {}".format(img_file)

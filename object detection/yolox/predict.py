@@ -9,9 +9,11 @@ import tqdm
 import time
 
 from config import opt
-from models.yolox import Detector
+from models.yolox_test import Detector
 from utils.util import mkdir, label_color, get_img_path
 
+import numpy as np
+import pydicom
 
 def vis_result(img, results):
     for res_i, res in enumerate(results):
@@ -69,7 +71,7 @@ def detect():
     output = "output"
     mkdir(output, rm=True)
 
-    img_list = get_img_path(img_dir, extend=".png")
+    img_list = get_img_path(img_dir, extend=".dcm")
     assert len(img_list) != 0, "cannot find img in {}".format(img_dir)
 
     detector = Detector(opt)
@@ -78,15 +80,53 @@ def detect():
         print("{}/{}, {}".format(index, len(img_list), image_path))
 
         assert os.path.isfile(image_path), "cannot find {}".format(image_path)
-        img = cv2.imread(image_path)
+        #img = cv2.imread(image_path)
+        ds = pydicom.read_file(image_path)
+        pixel_array = ds.pixel_array   # dicom image
+        Rescale_slope = ds.RescaleSlope   # dicom header (Rescale slope)
+        Rescale_intercept = ds.RescaleIntercept   # dicom header (Rescale intercept)
+        Window_center = ds.WindowCenter   # dicom header (Window center)
+        Window_width = ds.WindowWidth   # dicom header (Window width)
+        Photometric_interpretation = ds.PhotometricInterpretation   # dicom header (Photometric interpretation)
+
+        if(('RescaleSlope' in ds) and ('RescaleIntercept' in ds)):
+            pixel_array = (pixel_array * ds.RescaleSlope) + ds.RescaleIntercept
+        
+        if('WindowCenter' in ds):
+            if(type(ds.WindowCenter) == pydicom.multival.MultiValue):
+                window_center = float(ds.WindowCenter[0])
+                window_width = float(ds.WindowWidth[0])
+                lwin = window_center - (window_width / 2.0)
+                rwin = window_center + (window_width / 2.0)
+            else:    
+                window_center = float(ds.WindowCenter)
+                window_width = float(ds.WindowWidth)
+                lwin = window_center - (window_width / 2.0)
+                rwin = window_center + (window_width / 2.0)
+        else:
+            lwin = np.min(pixel_array)
+            rwin = np.max(pixel_array)
+
+        pixel_array[np.where(pixel_array < lwin)] = lwin
+        pixel_array[np.where(pixel_array > rwin)] = rwin
+        pixel_array = pixel_array - lwin
+
+        if(ds.PhotometricInterpretation == 'MONOCHROME1'):
+            pixel_array = 1.0 - pixel_array
+
+        pixel_array = pixel_array / (rwin - lwin) * 255
+        
+        img = np.repeat(pixel_array[..., np.newaxis],3,2)
+
         s1 = time.time()
         results = detector.run(img, vis_thresh=opt.vis_thresh, show_time=True)
         print("[pre_process + inference + post_process] time cost: {}s".format(time.time() - s1))
         print(results)
         img = vis_result(img, results)
+        print("type(img)",type(img))
         save_p = output + "/" + image_path.split("/")[-2]
         mkdir(save_p)
-        save_img = save_p + "/" + os.path.basename(image_path)
+        save_img = save_p + "/" + os.path.basename(image_path.replace("dcm","jpg"))
         cv2.imwrite(save_img, img)
         print("save image to {}".format(save_img))
 
