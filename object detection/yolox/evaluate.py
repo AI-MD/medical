@@ -13,8 +13,8 @@ from pycocotools.cocoeval import COCOeval
 
 from config import opt
 from utils.util import NpEncoder
-from models.yolox import Detector
-
+from models.yolox_test import Detector
+import pydicom
 
 def evaluate():
     detector = Detector(opt)
@@ -44,10 +44,48 @@ def evaluate():
             file_name = coco.loadImgs(ids=[img_id])[0]['file_name']
             image_path = img_dir + "/" + file_name
             assert os.path.isfile(image_path), "cannot find img {}".format(image_path)
-            img = cv2.imread(image_path)
 
+            #img = cv2.imread(image_path)
+            ds = pydicom.read_file(image_path)
+            pixel_array = ds.pixel_array   # dicom image
+            Rescale_slope = ds.RescaleSlope   # dicom header (Rescale slope)
+            Rescale_intercept = ds.RescaleIntercept   # dicom header (Rescale intercept)
+            Window_center = ds.WindowCenter   # dicom header (Window center)
+            Window_width = ds.WindowWidth   # dicom header (Window width)
+            Photometric_interpretation = ds.PhotometricInterpretation   # dicom header (Photometric interpretation)
+
+            if(('RescaleSlope' in ds) and ('RescaleIntercept' in ds)):
+                pixel_array = (pixel_array * ds.RescaleSlope) + ds.RescaleIntercept
+                
+            if('WindowCenter' in ds):
+                if(type(ds.WindowCenter) == pydicom.multival.MultiValue):
+                    window_center = float(ds.WindowCenter[0])
+                    window_width = float(ds.WindowWidth[0])
+                    lwin = window_center - (window_width / 2.0)
+                    rwin = window_center + (window_width / 2.0)
+                else:    
+                    window_center = float(ds.WindowCenter)
+                    window_width = float(ds.WindowWidth)
+                    lwin = window_center - (window_width / 2.0)
+                    rwin = window_center + (window_width / 2.0)
+            else:
+                lwin = np.min(pixel_array)
+                rwin = np.max(pixel_array)
+
+            pixel_array[np.where(pixel_array < lwin)] = lwin
+            pixel_array[np.where(pixel_array > rwin)] = rwin
+            pixel_array = pixel_array - lwin
+
+            if(ds.PhotometricInterpretation == 'MONOCHROME1'):
+                pixel_array = 1.0 - pixel_array
+
+            pixel_array = pixel_array / (rwin - lwin) * 255
+
+            img = np.repeat(pixel_array[..., np.newaxis],3,2)
+            
             batch_images.append(img)
             batch_img_ids.append(img_id)
+                
         try: 
             batch_results = detector.run(batch_images, vis_thresh=0.001)
         except:
@@ -84,7 +122,7 @@ def evaluate():
     coco_det = coco.loadRes(result_file)
     coco_eval = COCOeval(coco, coco_det, 'bbox')
     # hyperparamter
-    coco_eval.params.iouThrs = [0.5]
+    coco_eval.params.iouThrs = [0.01]
     
     coco_eval.evaluate()
     coco_eval.accumulate()
