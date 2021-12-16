@@ -79,3 +79,68 @@ Epoch: [24][11/18]	Time 0.2 (1.2)	Data 0.1 (1.1)	Loss 0.04 (0.05)	Accuracy 1.0 (
 Epoch: [25][ 0/18]	Time 11.9 (11.9)	Data 11.7 (11.7)	Loss 0.05 (0.05)	Accuracy 1.0 (1.0)
 Epoch: [25][11/18]	Time 0.2 (1.2)	Data 0.1 (1.0)	Loss 0.04 (0.05)	Accuracy 0.9 (1.0)
  *Acc 0.7217
+Epoch: [26][ 0/18]	Time 12.2 (12.2)	Data 12.1 (12.1)	Loss 0.02 (0.02)	Accuracy 1.0 (1.0)
+Epoch: [26][11/18]	Time 0.2 (1.2)	Data 0.1 (1.1)	Loss 0.02 (0.04)	Accuracy 1.0 (1.0)
+ *Acc 0.7983
+Epoch: [27][ 0/18]	Time 11.3 (11.3)	Data 11.1 (11.1)	Loss 0.03 (0.03)	Accuracy 1.0 (1.0)
+Epoch: [27][11/18]	Time 0.2 (1.1)	Data 0.1 (1.0)	Loss 0.03 (0.03)	Accuracy 1.0 (1.0)
+ *Acc 0.4567
+Epoch: [28][ 0/18]	Time 11.9 (11.9)	Data 11.8 (11.8)	Loss 0.04 (0.04)	Accuracy 1.0 (1.0)
+Epoch: [28][11/18]	Time 0.2 (1.2)	Data 0.1 (1.0)	Loss 0.03 (0.04)	Accuracy 1.0 (1.0)
+ *Acc 0.7250
+Epoch: [29][ 0/18]	Time 11.3 (11.3)	Data 11.2 (11.2)	Loss 0.04 (0.04)	Accuracy 1.0 (1.0)
+Epoch: [29][11/18]	Time 0.2 (1.1)	Data 0.1 (1.0)	Loss 0.05 (0.04)	Accuracy 1.0 (1.0)
+ *Acc 0.4850
+Epoch: [30][ 0/18]	Time 11.2 (11.2)	Data 11.1 (11.1)	Loss 0.05 (0.05)	Accuracy 1.0 (1.0)
+Epoch: [30][11/18]	Time 0.2 (1.1)	Data 0.1 (1.0)	Loss 0.08 (0.09)	Accuracy 0.9 (0.9)
+ *Acc 0.4050
+Epoch: [31][ 0/18]	Time 11.1 (11.1)	Data 10.9 (10.9)	Loss 0.03 (0.03)	Accuracy 1.0 (1.0)
+Epoch: [31][11/18]	Time 0.2 (1.1)	Data 0.1 (1.0)	Loss 0.05 (0.05)	Accuracy 0.9 (1.0)
+ *Acc 0.6900
+Epoch: [32][ 0/18]	Time 11.8 (11.8)	Data 11.6 (11.6)	Loss 0.03 (0.03)	Accuracy 1.0 (1.0)
+Epoch: [32][11/18]	Time 0.2 (1.2)	Data 0.1 (1.0)	Loss 0.05 (0.06)	Accuracy 1.0 (1.0)
+ *Acc 0.7133
+Epoch: [33][ 0/18]	Time 11.9 (11.9)	Data 11.7 (11.7)	Loss 0.05 (0.05)	Accuracy 1.0 (1.0)
+Epoch: [33][11/18]	Time 0.2 (1.2)	Data 0.1 (1.1)	Loss 0.08 (0.08)	Accuracy 0.9 (0.9)
+ *Acc 0.4800
+Epoch: [34][ 0/18]	Time 11.9 (11.9)	Data 11.7 (11.7)	Loss 0.08 (0.08)	Accuracy 0.9 (0.9)
+Epoch: [34][11/18]	Time 0.2 (1.2)	Data 0.1 (1.0)	Loss 0.05 (0.06)	Accuracy 0.9 (1.0)
+ *Acc 0.6567
+Epoch: [35][ 0/18]	Time 11.8 (11.8)	Data 11.7 (11.7)	Loss 0.05 (0.05)	Accuracy 1.0 (1.0)
+Epoch: [35][11/18]	Time 0.2 (1.2)	Data 0.1 (1.0)	Loss 0.13 (0.07)	Accuracy 0.9 (1.0)
+ *Acc 0.6433
+Epoch: [36][ 0/18]	Time 12.0 (12.0)	Data 11.9 (11.9)	Loss 0.04 (0.04)	Accuracy 1.0 (1.0)
+Epoch: [36][11/18]	Time 0.2 (1.2)	Data 0.1 (1.1)	Loss 0.12 (0.06)	Accuracy 0.9 (1.0)
+ *Acc 0.7233
+Epoch: [37][ 0/18]	Time 11.9 (11.9)	Data 11.8 (11.8)	Loss 0.05 (0.05)	Accuracy 1.0 (1.0)
+Epoch: [37][11/18]	Time 0.2 (1.2)	Data 0.1 (1.0)	Loss 0.03 (0.04)	Accuracy 1.0 (1.0)
+ *Acc 0.7183
+Epoch: [38][ 0/18]	Time 12.0 (12.0)	Data 11.9 (11.9)	Loss 0.01 (0.01)	Accuracy 1.0 (1.0)
+Epoch: [38][11/18]	Time 0.2 (1.2)	Data 0.1 (1.1)	Loss 0.05 (0.03)	Accuracy 0.9 (1.0)
+ *Acc 0.4867
+Epoch: [39][ 0/18]	Time 12.0 (12.0)	Data 11.8 (11.8)	Loss 0.06 (0.06)	Accuracy 1.0 (1.0)
+Epoch: [39][11/18]	Time 0.2 (1.2)	Data 0.1 (1.1)	Loss 0.04 (0.04)	Accuracy 1.0 (1.0)
+ *Acc 0.5450
+Epoch: [40][ 0/18]	Time 12.0 (12.0)	Data 11.8 (11.8)	Loss 0.04 (0.04)	Accuracy 1.0 (1.0)
+Epoch: [40][11/18]	Time 0.2 (1.2)	Data 0.1 (1.1)	Loss 0.03 (0.03)	Accuracy 1.0 (1.0)
+ *Acc 0.6717
+Epoch: [41][ 0/18]	Time 11.2 (11.2)	Data 11.0 (11.0)	Loss 0.01 (0.01)	Accuracy 1.0 (1.0)
+Epoch: [41][11/18]	Time 0.2 (1.1)	Data 0.1 (1.0)	Loss 0.02 (0.03)	Accuracy 1.0 (1.0)
+ *Acc 0.5067
+Epoch: [42][ 0/18]	Time 11.1 (11.1)	Data 11.0 (11.0)	Loss 0.01 (0.01)	Accuracy 1.0 (1.0)
+Epoch: [42][11/18]	Time 0.2 (1.1)	Data 0.1 (1.0)	Loss 0.04 (0.02)	Accuracy 1.0 (1.0)
+ *Acc 0.7367
+Epoch: [43][ 0/18]	Time 11.2 (11.2)	Data 11.1 (11.1)	Loss 0.01 (0.01)	Accuracy 1.0 (1.0)
+Epoch: [43][11/18]	Time 0.2 (1.1)	Data 0.1 (1.0)	Loss 0.02 (0.03)	Accuracy 1.0 (1.0)
+ *Acc 0.4250
+Epoch: [44][ 0/18]	Time 11.3 (11.3)	Data 11.2 (11.2)	Loss 0.02 (0.02)	Accuracy 1.0 (1.0)
+Epoch: [44][11/18]	Time 0.2 (1.1)	Data 0.1 (1.0)	Loss 0.05 (0.03)	Accuracy 1.0 (1.0)
+ *Acc 0.6383
+Epoch: [45][ 0/18]	Time 11.2 (11.2)	Data 11.0 (11.0)	Loss 0.02 (0.02)	Accuracy 1.0 (1.0)
+Epoch: [45][11/18]	Time 0.2 (1.1)	Data 0.1 (1.0)	Loss 0.02 (0.03)	Accuracy 1.0 (1.0)
+ *Acc 0.6400
+Epoch: [46][ 0/18]	Time 11.3 (11.3)	Data 11.2 (11.2)	Loss 0.01 (0.01)	Accuracy 1.0 (1.0)
+Epoch: [46][11/18]	Time 0.2 (1.1)	Data 0.1 (1.0)	Loss 0.05 (0.03)	Accuracy 1.0 (1.0)
+ *Acc 0.6350
+Epoch: [47][ 0/18]	Time 11.3 (11.3)	Data 11.2 (11.2)	Loss 0.01 (0.01)	Accuracy 1.0 (1.0)
+Epoch: [47][11/18]	Time 0.3 (1.1)	Data 0.1 (1.0)	Loss 0.05 (0.03)	Accuracy 1.0 (1.0)
