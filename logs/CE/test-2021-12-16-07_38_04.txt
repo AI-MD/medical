@@ -1,0 +1,16 @@
+Namespace(batch_size=32, data_dir='/root/dataset/Osteoporosis/Sagittal_Contrast_Final_1/', epochs=60, log='logs/CE', lr=0.0001, n_gpu=4, num_classes=3, phase='test', seed=0, weight_decay=0.001, workers=16)
+multi_class.py:43: UserWarning: You have chosen to seed training. This will turn on the CUDNN deterministic setting, which can slow down your training considerably! You may see unexpected behavior when restarting from checkpoints.
+  warnings.warn('You have chosen to seed training. '
+ *Acc 0.7650
+ *AUC 0.9334
+              precision    recall  f1-score   support
+
+      Normal     0.8017    0.9300    0.8611       200
+  Osteopenia     0.8144    0.3950    0.5320       200
+Osteoporosis     0.7159    0.9700    0.8238       200
+
+    accuracy                         0.7650       600
+   macro avg     0.7773    0.7650    0.7390       600
+weighted avg     0.7773    0.7650    0.7390       600
+
+0.765

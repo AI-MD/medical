@@ -1,0 +1,32 @@
+Namespace(batch_size=32, data_dir='/root/dataset/Osteoporosis/Sagittal_Contrast_Final_1/', epochs=60, log='logs/Ordinal', lr=0.0001, n_gpu=4, num_classes=3, phase='train', seed=0, weight_decay=0.001, workers=16)
+ordinal.py:41: UserWarning: You have chosen to seed training. This will turn on the CUDNN deterministic setting, which can slow down your training considerably! You may see unexpected behavior when restarting from checkpoints.
+  warnings.warn('You have chosen to seed training. '
+Epoch: [0][ 0/72]	Time 13.9 (13.9)	Data 3.1 (3.1)	Loss 0.68 (0.68)	Accuracy 0.5 (0.5)
+Epoch: [0][ 5/72]	Time 0.1 (2.4)	Data 0.0 (0.5)	Loss 0.48 (0.59)	Accuracy 0.5 (0.5)
+Epoch: [0][10/72]	Time 0.1 (1.4)	Data 0.0 (0.3)	Loss 0.67 (0.63)	Accuracy 0.5 (0.5)
+Epoch: [0][15/72]	Time 0.1 (1.0)	Data 0.0 (0.2)	Loss 0.48 (0.60)	Accuracy 0.6 (0.5)
+Epoch: [0][20/72]	Time 0.1 (0.8)	Data 0.0 (0.2)	Loss 0.51 (0.59)	Accuracy 0.6 (0.5)
+Epoch: [0][25/72]	Time 0.1 (0.7)	Data 0.0 (0.1)	Loss 0.44 (0.58)	Accuracy 0.6 (0.5)
+Epoch: [0][30/72]	Time 0.1 (0.6)	Data 0.0 (0.1)	Loss 0.43 (0.57)	Accuracy 0.6 (0.5)
+Epoch: [0][35/72]	Time 0.2 (0.5)	Data 0.1 (0.1)	Loss 0.58 (0.55)	Accuracy 0.3 (0.5)
+Epoch: [0][40/72]	Time 0.1 (0.5)	Data 0.1 (0.1)	Loss 0.68 (0.54)	Accuracy 0.5 (0.5)
+Epoch: [0][45/72]	Time 0.1 (0.4)	Data 0.0 (0.1)	Loss 0.30 (0.53)	Accuracy 0.8 (0.5)
+Epoch: [0][50/72]	Time 0.1 (0.4)	Data 0.0 (0.1)	Loss 0.36 (0.53)	Accuracy 0.8 (0.5)
+Epoch: [0][55/72]	Time 0.2 (0.4)	Data 0.0 (0.1)	Loss 0.42 (0.52)	Accuracy 0.7 (0.6)
+Epoch: [0][60/72]	Time 0.1 (0.4)	Data 0.0 (0.1)	Loss 0.43 (0.51)	Accuracy 0.6 (0.6)
+Epoch: [0][65/72]	Time 0.2 (0.3)	Data 0.0 (0.1)	Loss 0.53 (0.51)	Accuracy 0.5 (0.6)
+Epoch: [0][70/72]	Time 0.1 (0.3)	Data 0.0 (0.1)	Loss 0.42 (0.50)	Accuracy 0.6 (0.6)
+Traceback (most recent call last):
+  File "ordinal.py", line 253, in <module>
+    main(args)
+  File "ordinal.py", line 100, in main
+    acc = validate(model, val_loader, criterion, device, args)
+  File "ordinal.py", line 196, in validate
+    loss = criterion(output, target)
+  File "/root/anaconda3/lib/python3.8/site-packages/torch/nn/modules/module.py", line 727, in _call_impl
+    result = self.forward(*input, **kwargs)
+  File "/root/anaconda3/lib/python3.8/site-packages/torch/nn/modules/loss.py", line 629, in forward
+    return F.binary_cross_entropy_with_logits(input, target,
+  File "/root/anaconda3/lib/python3.8/site-packages/torch/nn/functional.py", line 2580, in binary_cross_entropy_with_logits
+    raise ValueError("Target size ({}) must be the same as input size ({})".format(target.size(), input.size()))
+ValueError: Target size (torch.Size([32])) must be the same as input size (torch.Size([32, 2]))

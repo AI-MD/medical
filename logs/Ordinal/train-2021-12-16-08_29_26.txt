@@ -1,0 +1,19 @@
+Namespace(batch_size=32, data_dir='/root/dataset/Osteoporosis/Sagittal_Contrast_Final_1/', epochs=60, log='logs/Ordinal', lr=0.0001, n_gpu=4, num_classes=3, phase='train', seed=0, weight_decay=0.001, workers=16)
+ordinal.py:41: UserWarning: You have chosen to seed training. This will turn on the CUDNN deterministic setting, which can slow down your training considerably! You may see unexpected behavior when restarting from checkpoints.
+  warnings.warn('You have chosen to seed training. '
+tensor([2, 0, 2, 2, 0, 0, 1, 2, 0, 0, 0, 2, 0, 0, 2, 1, 0, 1, 1, 0, 0, 2, 0, 1,
+        1, 2, 0, 0, 0, 0, 2, 0], device='cuda:0')
+Traceback (most recent call last):
+  File "ordinal.py", line 250, in <module>
+    main(args)
+  File "ordinal.py", line 96, in main
+    train(model, train_loader, criterion, optimizer,
+  File "ordinal.py", line 144, in train
+    levels = levels_from_labelbatch(target, args.num_classes)
+  File "/root/work/KNU_Medical_CT/utils/util.py", line 60, in levels_from_labelbatch
+    level = levels_from_labelbatch(label, num_classes)
+  File "/root/work/KNU_Medical_CT/utils/util.py", line 59, in levels_from_labelbatch
+    for label in labels:
+  File "/root/anaconda3/lib/python3.8/site-packages/torch/tensor.py", line 588, in __iter__
+    raise TypeError('iteration over a 0-d tensor')
+TypeError: iteration over a 0-d tensor

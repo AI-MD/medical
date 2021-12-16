@@ -1,0 +1,186 @@
+Namespace(batch_size=128, data_dir='/root/dataset/Osteoporosis/Sagittal_Contrast_Final_1/', epochs=60, log='logs/CE', lr=0.001, n_gpu=4, num_classes=3, phase='train', seed=2, weight_decay=0.001, workers=16)
+multi_class.py:38: UserWarning: You have chosen to seed training. This will turn on the CUDNN deterministic setting, which can slow down your training considerably! You may see unexpected behavior when restarting from checkpoints.
+  warnings.warn('You have chosen to seed training. '
+Epoch: [0][ 0/18]	Time 20.0 (20.0)	Data 9.1 (9.1)	Loss 1.19 (1.19)	Accuracy 0.3 (0.3)
+Epoch: [0][11/18]	Time 0.2 (1.8)	Data 0.1 (0.8)	Loss 0.65 (1.03)	Accuracy 0.7 (0.6)
+ *Acc 0.423
+Epoch: [1][ 0/18]	Time 10.5 (10.5)	Data 10.4 (10.4)	Loss 0.73 (0.73)	Accuracy 0.7 (0.7)
+Epoch: [1][11/18]	Time 0.2 (1.0)	Data 0.1 (0.9)	Loss 0.65 (0.61)	Accuracy 0.7 (0.7)
+ *Acc 0.663
+Epoch: [2][ 0/18]	Time 10.0 (10.0)	Data 9.9 (9.9)	Loss 0.48 (0.48)	Accuracy 0.8 (0.8)
+Epoch: [2][11/18]	Time 0.2 (1.0)	Data 0.1 (0.9)	Loss 0.60 (0.54)	Accuracy 0.7 (0.8)
+ *Acc 0.808
+Epoch: [3][ 0/18]	Time 10.8 (10.8)	Data 10.6 (10.6)	Loss 0.66 (0.66)	Accuracy 0.7 (0.7)
+Epoch: [3][11/18]	Time 0.2 (1.1)	Data 0.1 (1.0)	Loss 0.48 (0.52)	Accuracy 0.8 (0.8)
+ *Acc 0.698
+Epoch: [4][ 0/18]	Time 9.8 (9.8)	Data 9.7 (9.7)	Loss 0.51 (0.51)	Accuracy 0.8 (0.8)
+Epoch: [4][11/18]	Time 0.2 (1.0)	Data 0.1 (0.9)	Loss 0.48 (0.46)	Accuracy 0.8 (0.8)
+ *Acc 0.810
+Epoch: [5][ 0/18]	Time 10.3 (10.3)	Data 10.2 (10.2)	Loss 0.38 (0.38)	Accuracy 0.8 (0.8)
+Epoch: [5][11/18]	Time 0.2 (1.0)	Data 0.1 (0.9)	Loss 0.52 (0.44)	Accuracy 0.8 (0.8)
+ *Acc 0.815
+Epoch: [6][ 0/18]	Time 10.0 (10.0)	Data 9.9 (9.9)	Loss 0.36 (0.36)	Accuracy 0.9 (0.9)
+Epoch: [6][11/18]	Time 0.2 (1.0)	Data 0.1 (0.9)	Loss 0.42 (0.41)	Accuracy 0.8 (0.8)
+ *Acc 0.800
+Epoch: [7][ 0/18]	Time 10.7 (10.7)	Data 10.6 (10.6)	Loss 0.43 (0.43)	Accuracy 0.8 (0.8)
+Epoch: [7][11/18]	Time 0.2 (1.1)	Data 0.1 (1.0)	Loss 0.33 (0.41)	Accuracy 0.9 (0.8)
+ *Acc 0.612
+Epoch: [8][ 0/18]	Time 10.7 (10.7)	Data 10.5 (10.5)	Loss 0.41 (0.41)	Accuracy 0.8 (0.8)
+Epoch: [8][11/18]	Time 0.2 (1.0)	Data 0.1 (0.9)	Loss 0.42 (0.43)	Accuracy 0.8 (0.8)
+ *Acc 0.645
+Epoch: [9][ 0/18]	Time 10.8 (10.8)	Data 10.7 (10.7)	Loss 0.39 (0.39)	Accuracy 0.9 (0.9)
+Epoch: [9][11/18]	Time 0.2 (1.1)	Data 0.1 (1.0)	Loss 0.50 (0.42)	Accuracy 0.8 (0.8)
+ *Acc 0.542
+Epoch: [10][ 0/18]	Time 10.8 (10.8)	Data 10.7 (10.7)	Loss 0.44 (0.44)	Accuracy 0.8 (0.8)
+Epoch: [10][11/18]	Time 0.2 (1.1)	Data 0.1 (1.0)	Loss 0.46 (0.44)	Accuracy 0.8 (0.8)
+ *Acc 0.435
+Epoch: [11][ 0/18]	Time 10.7 (10.7)	Data 10.5 (10.5)	Loss 0.48 (0.48)	Accuracy 0.8 (0.8)
+Epoch: [11][11/18]	Time 0.2 (1.0)	Data 0.1 (0.9)	Loss 0.43 (0.45)	Accuracy 0.8 (0.8)
+ *Acc 0.712
+Epoch: [12][ 0/18]	Time 10.9 (10.9)	Data 10.8 (10.8)	Loss 0.36 (0.36)	Accuracy 0.9 (0.9)
+Epoch: [12][11/18]	Time 0.2 (1.1)	Data 0.1 (1.0)	Loss 0.40 (0.42)	Accuracy 0.8 (0.8)
+ *Acc 0.675
+Epoch: [13][ 0/18]	Time 10.8 (10.8)	Data 10.7 (10.7)	Loss 0.30 (0.30)	Accuracy 0.9 (0.9)
+Epoch: [13][11/18]	Time 0.2 (1.1)	Data 0.1 (1.0)	Loss 0.22 (0.32)	Accuracy 0.9 (0.9)
+ *Acc 0.718
+Epoch: [14][ 0/18]	Time 10.7 (10.7)	Data 10.6 (10.6)	Loss 0.24 (0.24)	Accuracy 0.9 (0.9)
+Epoch: [14][11/18]	Time 0.2 (1.1)	Data 0.1 (1.0)	Loss 0.21 (0.26)	Accuracy 0.9 (0.9)
+ *Acc 0.393
+Epoch: [15][ 0/18]	Time 10.8 (10.8)	Data 10.6 (10.6)	Loss 0.15 (0.15)	Accuracy 1.0 (1.0)
+Epoch: [15][11/18]	Time 0.2 (1.1)	Data 0.1 (1.0)	Loss 0.11 (0.16)	Accuracy 1.0 (0.9)
+ *Acc 0.763
+Epoch: [16][ 0/18]	Time 10.6 (10.6)	Data 10.5 (10.5)	Loss 0.11 (0.11)	Accuracy 1.0 (1.0)
+Epoch: [16][11/18]	Time 0.2 (1.1)	Data 0.1 (1.0)	Loss 0.10 (0.12)	Accuracy 1.0 (1.0)
+ *Acc 0.763
+Epoch: [17][ 0/18]	Time 10.8 (10.8)	Data 10.7 (10.7)	Loss 0.16 (0.16)	Accuracy 1.0 (1.0)
+Epoch: [17][11/18]	Time 0.2 (1.1)	Data 0.1 (1.0)	Loss 0.11 (0.11)	Accuracy 1.0 (1.0)
+ *Acc 0.747
+Epoch: [18][ 0/18]	Time 10.6 (10.6)	Data 10.5 (10.5)	Loss 0.11 (0.11)	Accuracy 1.0 (1.0)
+Epoch: [18][11/18]	Time 0.2 (1.0)	Data 0.1 (0.9)	Loss 0.19 (0.09)	Accuracy 0.9 (1.0)
+ *Acc 0.753
+Epoch: [19][ 0/18]	Time 10.7 (10.7)	Data 10.6 (10.6)	Loss 0.04 (0.04)	Accuracy 1.0 (1.0)
+Epoch: [19][11/18]	Time 0.2 (1.1)	Data 0.1 (1.0)	Loss 0.15 (0.11)	Accuracy 0.9 (1.0)
+ *Acc 0.433
+Epoch: [20][ 0/18]	Time 10.6 (10.6)	Data 10.5 (10.5)	Loss 0.36 (0.36)	Accuracy 0.9 (0.9)
+Epoch: [20][11/18]	Time 0.2 (1.1)	Data 0.1 (0.9)	Loss 0.31 (0.36)	Accuracy 0.9 (0.9)
+ *Acc 0.458
+Epoch: [21][ 0/18]	Time 10.7 (10.7)	Data 10.6 (10.6)	Loss 0.29 (0.29)	Accuracy 0.9 (0.9)
+Epoch: [21][11/18]	Time 0.2 (1.1)	Data 0.1 (1.0)	Loss 0.28 (0.26)	Accuracy 0.9 (0.9)
+ *Acc 0.640
+Epoch: [22][ 0/18]	Time 10.7 (10.7)	Data 10.6 (10.6)	Loss 0.44 (0.44)	Accuracy 0.8 (0.8)
+Epoch: [22][11/18]	Time 0.2 (1.1)	Data 0.1 (1.0)	Loss 0.38 (0.31)	Accuracy 0.8 (0.9)
+ *Acc 0.653
+Epoch: [23][ 0/18]	Time 10.7 (10.7)	Data 10.6 (10.6)	Loss 0.16 (0.16)	Accuracy 0.9 (0.9)
+Epoch: [23][11/18]	Time 0.2 (1.1)	Data 0.1 (1.0)	Loss 0.24 (0.24)	Accuracy 0.9 (0.9)
+ *Acc 0.385
+Epoch: [24][ 0/18]	Time 9.9 (9.9)	Data 9.8 (9.8)	Loss 0.18 (0.18)	Accuracy 0.9 (0.9)
+Epoch: [24][11/18]	Time 0.2 (1.0)	Data 0.1 (0.9)	Loss 0.17 (0.17)	Accuracy 0.9 (0.9)
+ *Acc 0.723
+Epoch: [25][ 0/18]	Time 10.0 (10.0)	Data 9.9 (9.9)	Loss 0.14 (0.14)	Accuracy 1.0 (1.0)
+Epoch: [25][11/18]	Time 0.2 (1.0)	Data 0.1 (0.9)	Loss 0.06 (0.10)	Accuracy 1.0 (1.0)
+ *Acc 0.658
+Epoch: [26][ 0/18]	Time 9.9 (9.9)	Data 9.8 (9.8)	Loss 0.05 (0.05)	Accuracy 1.0 (1.0)
+Epoch: [26][11/18]	Time 0.2 (1.0)	Data 0.1 (0.9)	Loss 0.02 (0.06)	Accuracy 1.0 (1.0)
+ *Acc 0.747
+Epoch: [27][ 0/18]	Time 10.6 (10.6)	Data 10.5 (10.5)	Loss 0.05 (0.05)	Accuracy 1.0 (1.0)
+Epoch: [27][11/18]	Time 0.2 (1.1)	Data 0.1 (0.9)	Loss 0.04 (0.04)	Accuracy 1.0 (1.0)
+ *Acc 0.747
+Epoch: [28][ 0/18]	Time 10.5 (10.5)	Data 10.4 (10.4)	Loss 0.04 (0.04)	Accuracy 1.0 (1.0)
+Epoch: [28][11/18]	Time 0.2 (1.0)	Data 0.1 (0.9)	Loss 0.08 (0.04)	Accuracy 1.0 (1.0)
+ *Acc 0.733
+Epoch: [29][ 0/18]	Time 10.6 (10.6)	Data 10.5 (10.5)	Loss 0.03 (0.03)	Accuracy 1.0 (1.0)
+Epoch: [29][11/18]	Time 0.2 (1.1)	Data 0.1 (1.0)	Loss 0.02 (0.03)	Accuracy 1.0 (1.0)
+ *Acc 0.747
+Epoch: [30][ 0/18]	Time 10.8 (10.8)	Data 10.6 (10.6)	Loss 0.03 (0.03)	Accuracy 1.0 (1.0)
+Epoch: [30][11/18]	Time 0.2 (1.0)	Data 0.1 (0.9)	Loss 0.01 (0.03)	Accuracy 1.0 (1.0)
+ *Acc 0.572
+Epoch: [31][ 0/18]	Time 10.5 (10.5)	Data 10.4 (10.4)	Loss 0.07 (0.07)	Accuracy 1.0 (1.0)
+Epoch: [31][11/18]	Time 0.2 (1.0)	Data 0.1 (0.9)	Loss 0.08 (0.06)	Accuracy 1.0 (1.0)
+ *Acc 0.688
+Epoch: [32][ 0/18]	Time 10.9 (10.9)	Data 10.8 (10.8)	Loss 0.07 (0.07)	Accuracy 1.0 (1.0)
+Epoch: [32][11/18]	Time 0.2 (1.1)	Data 0.1 (1.0)	Loss 0.10 (0.14)	Accuracy 1.0 (1.0)
+ *Acc 0.653
+Epoch: [33][ 0/18]	Time 10.6 (10.6)	Data 10.4 (10.4)	Loss 0.17 (0.17)	Accuracy 0.9 (0.9)
+Epoch: [33][11/18]	Time 0.2 (1.1)	Data 0.1 (0.9)	Loss 0.29 (0.24)	Accuracy 0.9 (0.9)
+ *Acc 0.712
+Epoch: [34][ 0/18]	Time 10.5 (10.5)	Data 10.4 (10.4)	Loss 0.23 (0.23)	Accuracy 0.9 (0.9)
+Epoch: [34][11/18]	Time 0.2 (1.0)	Data 0.1 (0.9)	Loss 0.23 (0.24)	Accuracy 0.9 (0.9)
+ *Acc 0.362
+Epoch: [35][ 0/18]	Time 10.8 (10.8)	Data 10.7 (10.7)	Loss 0.13 (0.13)	Accuracy 1.0 (1.0)
+Epoch: [35][11/18]	Time 0.2 (1.1)	Data 0.1 (1.0)	Loss 0.08 (0.15)	Accuracy 1.0 (0.9)
+ *Acc 0.553
+Epoch: [36][ 0/18]	Time 10.5 (10.5)	Data 10.4 (10.4)	Loss 0.09 (0.09)	Accuracy 1.0 (1.0)
+Epoch: [36][11/18]	Time 0.2 (1.0)	Data 0.1 (0.9)	Loss 0.17 (0.10)	Accuracy 0.9 (1.0)
+ *Acc 0.692
+Epoch: [37][ 0/18]	Time 10.6 (10.6)	Data 10.4 (10.4)	Loss 0.04 (0.04)	Accuracy 1.0 (1.0)
+Epoch: [37][11/18]	Time 0.2 (1.1)	Data 0.1 (0.9)	Loss 0.06 (0.05)	Accuracy 1.0 (1.0)
+ *Acc 0.720
+Epoch: [38][ 0/18]	Time 9.9 (9.9)	Data 9.8 (9.8)	Loss 0.01 (0.01)	Accuracy 1.0 (1.0)
+Epoch: [38][11/18]	Time 0.2 (1.0)	Data 0.1 (0.9)	Loss 0.04 (0.03)	Accuracy 1.0 (1.0)
+ *Acc 0.717
+Epoch: [39][ 0/18]	Time 10.7 (10.7)	Data 10.6 (10.6)	Loss 0.03 (0.03)	Accuracy 1.0 (1.0)
+Epoch: [39][11/18]	Time 0.2 (1.1)	Data 0.1 (1.0)	Loss 0.09 (0.03)	Accuracy 1.0 (1.0)
+ *Acc 0.718
+Epoch: [40][ 0/18]	Time 10.6 (10.6)	Data 10.5 (10.5)	Loss 0.04 (0.04)	Accuracy 1.0 (1.0)
+Epoch: [40][11/18]	Time 0.2 (1.0)	Data 0.1 (0.9)	Loss 0.02 (0.02)	Accuracy 1.0 (1.0)
+ *Acc 0.710
+Epoch: [41][ 0/18]	Time 10.7 (10.7)	Data 10.6 (10.6)	Loss 0.02 (0.02)	Accuracy 1.0 (1.0)
+Epoch: [41][11/18]	Time 0.2 (1.1)	Data 0.1 (1.0)	Loss 0.04 (0.02)	Accuracy 1.0 (1.0)
+ *Acc 0.745
+Epoch: [42][ 0/18]	Time 10.5 (10.5)	Data 10.4 (10.4)	Loss 0.03 (0.03)	Accuracy 1.0 (1.0)
+Epoch: [42][11/18]	Time 0.2 (1.0)	Data 0.1 (0.9)	Loss 0.03 (0.02)	Accuracy 1.0 (1.0)
+ *Acc 0.680
+Epoch: [43][ 0/18]	Time 10.6 (10.6)	Data 10.5 (10.5)	Loss 0.02 (0.02)	Accuracy 1.0 (1.0)
+Epoch: [43][11/18]	Time 0.2 (1.0)	Data 0.1 (0.9)	Loss 0.07 (0.08)	Accuracy 1.0 (1.0)
+ *Acc 0.632
+Epoch: [44][ 0/18]	Time 10.6 (10.6)	Data 10.5 (10.5)	Loss 0.14 (0.14)	Accuracy 0.9 (0.9)
+Epoch: [44][11/18]	Time 0.2 (1.0)	Data 0.1 (0.9)	Loss 0.20 (0.16)	Accuracy 0.9 (0.9)
+ *Acc 0.483
+Epoch: [45][ 0/18]	Time 10.6 (10.6)	Data 10.5 (10.5)	Loss 0.25 (0.25)	Accuracy 0.9 (0.9)
+Epoch: [45][11/18]	Time 0.2 (1.1)	Data 0.1 (0.9)	Loss 0.29 (0.22)	Accuracy 0.9 (0.9)
+ *Acc 0.447
+Epoch: [46][ 0/18]	Time 10.6 (10.6)	Data 10.5 (10.5)	Loss 0.10 (0.10)	Accuracy 1.0 (1.0)
+Epoch: [46][11/18]	Time 0.2 (1.0)	Data 0.1 (0.9)	Loss 0.08 (0.14)	Accuracy 1.0 (1.0)
+ *Acc 0.690
+Epoch: [47][ 0/18]	Time 10.6 (10.6)	Data 10.5 (10.5)	Loss 0.11 (0.11)	Accuracy 1.0 (1.0)
+Epoch: [47][11/18]	Time 0.2 (1.0)	Data 0.1 (0.9)	Loss 0.04 (0.07)	Accuracy 1.0 (1.0)
+ *Acc 0.732
+Epoch: [48][ 0/18]	Time 10.4 (10.4)	Data 10.3 (10.3)	Loss 0.06 (0.06)	Accuracy 1.0 (1.0)
+Epoch: [48][11/18]	Time 0.2 (1.0)	Data 0.1 (0.9)	Loss 0.04 (0.03)	Accuracy 1.0 (1.0)
+ *Acc 0.777
+Epoch: [49][ 0/18]	Time 10.7 (10.7)	Data 10.6 (10.6)	Loss 0.02 (0.02)	Accuracy 1.0 (1.0)
+Epoch: [49][11/18]	Time 0.2 (1.1)	Data 0.1 (0.9)	Loss 0.01 (0.02)	Accuracy 1.0 (1.0)
+ *Acc 0.780
+Epoch: [50][ 0/18]	Time 10.8 (10.8)	Data 10.7 (10.7)	Loss 0.02 (0.02)	Accuracy 1.0 (1.0)
+Epoch: [50][11/18]	Time 0.2 (1.1)	Data 0.1 (1.0)	Loss 0.03 (0.02)	Accuracy 1.0 (1.0)
+ *Acc 0.763
+Epoch: [51][ 0/18]	Time 10.9 (10.9)	Data 10.8 (10.8)	Loss 0.01 (0.01)	Accuracy 1.0 (1.0)
+Epoch: [51][11/18]	Time 0.2 (1.1)	Data 0.1 (1.0)	Loss 0.02 (0.02)	Accuracy 1.0 (1.0)
+ *Acc 0.752
+Epoch: [52][ 0/18]	Time 10.7 (10.7)	Data 10.6 (10.6)	Loss 0.02 (0.02)	Accuracy 1.0 (1.0)
+Epoch: [52][11/18]	Time 0.2 (1.1)	Data 0.1 (1.0)	Loss 0.01 (0.01)	Accuracy 1.0 (1.0)
+ *Acc 0.743
+Epoch: [53][ 0/18]	Time 10.7 (10.7)	Data 10.5 (10.5)	Loss 0.01 (0.01)	Accuracy 1.0 (1.0)
+Epoch: [53][11/18]	Time 0.2 (1.0)	Data 0.1 (0.9)	Loss 0.01 (0.02)	Accuracy 1.0 (1.0)
+ *Acc 0.740
+Epoch: [54][ 0/18]	Time 10.7 (10.7)	Data 10.6 (10.6)	Loss 0.02 (0.02)	Accuracy 1.0 (1.0)
+Epoch: [54][11/18]	Time 0.2 (1.1)	Data 0.1 (0.9)	Loss 0.07 (0.05)	Accuracy 1.0 (1.0)
+ *Acc 0.558
+Epoch: [55][ 0/18]	Time 11.2 (11.2)	Data 11.1 (11.1)	Loss 0.07 (0.07)	Accuracy 1.0 (1.0)
+Epoch: [55][11/18]	Time 0.2 (1.1)	Data 0.1 (1.0)	Loss 0.14 (0.14)	Accuracy 0.9 (0.9)
+ *Acc 0.338
+Epoch: [56][ 0/18]	Time 10.6 (10.6)	Data 10.5 (10.5)	Loss 0.15 (0.15)	Accuracy 1.0 (1.0)
+Epoch: [56][11/18]	Time 0.2 (1.0)	Data 0.1 (0.9)	Loss 0.12 (0.17)	Accuracy 1.0 (0.9)
+ *Acc 0.650
+Epoch: [57][ 0/18]	Time 10.8 (10.8)	Data 10.7 (10.7)	Loss 0.14 (0.14)	Accuracy 1.0 (1.0)
+Epoch: [57][11/18]	Time 0.2 (1.1)	Data 0.1 (1.0)	Loss 0.14 (0.12)	Accuracy 1.0 (1.0)
+ *Acc 0.637
+Epoch: [58][ 0/18]	Time 10.7 (10.7)	Data 10.6 (10.6)	Loss 0.08 (0.08)	Accuracy 1.0 (1.0)
+Epoch: [58][11/18]	Time 0.2 (1.0)	Data 0.1 (0.9)	Loss 0.12 (0.08)	Accuracy 1.0 (1.0)
+ *Acc 0.580
+Epoch: [59][ 0/18]	Time 10.4 (10.4)	Data 10.2 (10.2)	Loss 0.06 (0.06)	Accuracy 1.0 (1.0)
+Epoch: [59][11/18]	Time 0.2 (1.0)	Data 0.1 (0.9)	Loss 0.06 (0.05)	Accuracy 1.0 (1.0)
+ *Acc 0.747
+best_accuracy =   0.81
+ *Acc 0.815
+test_accuracy =   0.81

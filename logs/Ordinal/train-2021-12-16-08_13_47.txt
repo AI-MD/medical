@@ -1,0 +1,11 @@
+Namespace(batch_size=32, data_dir='/root/dataset/Osteoporosis/Sagittal_Contrast_Final_1/', epochs=60, log='logs/Ordinal', lr=0.0001, n_gpu=4, num_classes=3, phase='train', seed=1, weight_decay=0.001, workers=16)
+ordinal.py:41: UserWarning: You have chosen to seed training. This will turn on the CUDNN deterministic setting, which can slow down your training considerably! You may see unexpected behavior when restarting from checkpoints.
+  warnings.warn('You have chosen to seed training. '
+Traceback (most recent call last):
+  File "ordinal.py", line 248, in <module>
+    main(args)
+  File "ordinal.py", line 96, in main
+    train(model, train_loader, criterion, optimizer,
+  File "ordinal.py", line 128, in train
+    args.iters_per_epoch,
+AttributeError: 'Namespace' object has no attribute 'iters_per_epoch'

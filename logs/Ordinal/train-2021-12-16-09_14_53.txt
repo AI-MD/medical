@@ -1,0 +1,59 @@
+Namespace(batch_size=128, data_dir='/root/dataset/Osteoporosis/Sagittal_Contrast_Final_1/', epochs=60, log='logs/Ordinal', lr=0.001, n_gpu=4, num_classes=3, phase='train', seed=0, weight_decay=0.001, workers=16)
+ordinal.py:41: UserWarning: You have chosen to seed training. This will turn on the CUDNN deterministic setting, which can slow down your training considerably! You may see unexpected behavior when restarting from checkpoints.
+  warnings.warn('You have chosen to seed training. '
+Epoch: [0][ 0/18]	Time 20.2 (20.2)	Data 9.0 (9.0)	Loss 0.67 (0.67)	Accuracy 0.4 (0.4)
+Epoch: [0][11/18]	Time 0.2 (1.9)	Data 0.1 (0.8)	Loss 0.45 (0.57)	Accuracy 0.6 (0.5)
+ *Acc 0.4517
+Epoch: [1][ 0/18]	Time 10.1 (10.1)	Data 9.9 (9.9)	Loss 0.39 (0.39)	Accuracy 0.7 (0.7)
+Epoch: [1][11/18]	Time 0.2 (1.0)	Data 0.1 (0.9)	Loss 0.43 (0.37)	Accuracy 0.7 (0.7)
+ *Acc 0.4750
+Epoch: [2][ 0/18]	Time 9.9 (9.9)	Data 9.8 (9.8)	Loss 0.34 (0.34)	Accuracy 0.7 (0.7)
+Epoch: [2][11/18]	Time 0.2 (1.0)	Data 0.1 (0.9)	Loss 0.28 (0.36)	Accuracy 0.7 (0.7)
+ *Acc 0.5950
+Epoch: [3][ 0/18]	Time 9.8 (9.8)	Data 9.7 (9.7)	Loss 0.38 (0.38)	Accuracy 0.7 (0.7)
+Epoch: [3][11/18]	Time 0.2 (1.0)	Data 0.1 (0.9)	Loss 0.30 (0.35)	Accuracy 0.8 (0.7)
+ *Acc 0.3333
+Epoch: [4][ 0/18]	Time 9.9 (9.9)	Data 9.8 (9.8)	Loss 0.35 (0.35)	Accuracy 0.7 (0.7)
+Epoch: [4][11/18]	Time 0.2 (1.0)	Data 0.1 (0.9)	Loss 0.31 (0.32)	Accuracy 0.7 (0.7)
+ *Acc 0.4667
+Epoch: [5][ 0/18]	Time 10.2 (10.2)	Data 10.0 (10.0)	Loss 0.28 (0.28)	Accuracy 0.8 (0.8)
+Epoch: [5][11/18]	Time 0.2 (1.0)	Data 0.1 (0.9)	Loss 0.31 (0.28)	Accuracy 0.8 (0.8)
+ *Acc 0.6583
+Epoch: [6][ 0/18]	Time 10.1 (10.1)	Data 10.0 (10.0)	Loss 0.17 (0.17)	Accuracy 0.8 (0.8)
+Epoch: [6][11/18]	Time 0.2 (1.0)	Data 0.1 (0.9)	Loss 0.39 (0.25)	Accuracy 0.6 (0.8)
+ *Acc 0.5783
+Epoch: [7][ 0/18]	Time 10.3 (10.3)	Data 10.2 (10.2)	Loss 0.28 (0.28)	Accuracy 0.7 (0.7)
+Epoch: [7][11/18]	Time 0.2 (1.0)	Data 0.1 (0.9)	Loss 0.22 (0.23)	Accuracy 0.8 (0.8)
+ *Acc 0.6900
+Epoch: [8][ 0/18]	Time 10.0 (10.0)	Data 9.8 (9.8)	Loss 0.22 (0.22)	Accuracy 0.8 (0.8)
+Epoch: [8][11/18]	Time 0.2 (1.0)	Data 0.1 (0.9)	Loss 0.18 (0.18)	Accuracy 0.9 (0.9)
+ *Acc 0.5200
+Epoch: [9][ 0/18]	Time 10.0 (10.0)	Data 9.9 (9.9)	Loss 0.24 (0.24)	Accuracy 0.8 (0.8)
+Epoch: [9][11/18]	Time 0.2 (1.0)	Data 0.1 (0.9)	Loss 0.17 (0.21)	Accuracy 0.9 (0.8)
+ *Acc 0.3617
+Traceback (most recent call last):
+  File "ordinal.py", line 253, in <module>
+    main(args)
+  File "ordinal.py", line 96, in main
+    train(model, train_loader, criterion, optimizer,
+  File "ordinal.py", line 135, in train
+    for batch_idx, (data, target) in enumerate(train_loader):
+  File "/root/anaconda3/lib/python3.8/site-packages/torch/utils/data/dataloader.py", line 435, in __next__
+    data = self._next_data()
+  File "/root/anaconda3/lib/python3.8/site-packages/torch/utils/data/dataloader.py", line 1068, in _next_data
+    idx, data = self._get_data()
+  File "/root/anaconda3/lib/python3.8/site-packages/torch/utils/data/dataloader.py", line 1034, in _get_data
+    success, data = self._try_get_data()
+  File "/root/anaconda3/lib/python3.8/site-packages/torch/utils/data/dataloader.py", line 872, in _try_get_data
+    data = self._data_queue.get(timeout=timeout)
+  File "/root/anaconda3/lib/python3.8/multiprocessing/queues.py", line 107, in get
+    if not self._poll(timeout):
+  File "/root/anaconda3/lib/python3.8/multiprocessing/connection.py", line 257, in poll
+    return self._poll(timeout)
+  File "/root/anaconda3/lib/python3.8/multiprocessing/connection.py", line 424, in _poll
+    r = wait([self], timeout)
+  File "/root/anaconda3/lib/python3.8/multiprocessing/connection.py", line 931, in wait
+    ready = selector.select(timeout)
+  File "/root/anaconda3/lib/python3.8/selectors.py", line 415, in select
+    fd_event_list = self._selector.poll(timeout)
+KeyboardInterrupt

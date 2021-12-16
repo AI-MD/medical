@@ -1,0 +1,25 @@
+Namespace(batch_size=32, data_dir='/root/dataset/Osteoporosis/Sagittal_Contrast_Final_1/', epochs=60, log='logs/CE', lr=0.0001, n_gpu=4, num_classes=3, phase='test', seed=0, weight_decay=0.001, workers=16)
+multi_class.py:43: UserWarning: You have chosen to seed training. This will turn on the CUDNN deterministic setting, which can slow down your training considerably! You may see unexpected behavior when restarting from checkpoints.
+  warnings.warn('You have chosen to seed training. '
+ *Acc 0.7650
+0.9333666666666666
+Traceback (most recent call last):
+  File "multi_class.py", line 251, in <module>
+    main(args)
+  File "multi_class.py", line 90, in main
+    acc1 = validate(model, val_loader, criterion, device, args, True)
+  File "multi_class.py", line 215, in validate
+    print(classification_report(targets, preds, target_names=target_names))
+  File "/root/anaconda3/lib/python3.8/site-packages/sklearn/metrics/_classification.py", line 2076, in classification_report
+    y_type, y_true, y_pred = _check_targets(y_true, y_pred)
+  File "/root/anaconda3/lib/python3.8/site-packages/sklearn/metrics/_classification.py", line 85, in _check_targets
+    type_true = type_of_target(y_true)
+  File "/root/anaconda3/lib/python3.8/site-packages/sklearn/utils/multiclass.py", line 279, in type_of_target
+    if is_multilabel(y):
+  File "/root/anaconda3/lib/python3.8/site-packages/sklearn/utils/multiclass.py", line 151, in is_multilabel
+    y = np.asarray(y)
+  File "/root/anaconda3/lib/python3.8/site-packages/numpy/core/_asarray.py", line 83, in asarray
+    return array(a, dtype, copy=False, order=order)
+  File "/root/anaconda3/lib/python3.8/site-packages/torch/tensor.py", line 630, in __array__
+    return self.numpy()
+TypeError: can't convert cuda:0 device type tensor to numpy. Use Tensor.cpu() to copy the tensor to host memory first.
