@@ -2,7 +2,7 @@ import torch
 import torch.nn.functional as F
 from torch.nn.modules.loss import _WeightedLoss
 
-def coral_loss(logits, levels, weight, reduction='mean'):
+def condor_loss(logits, levels, weight, reduction='mean'):
     r"""Compute the CORN loss used in `Universally rank consistent ordinal regression in neural networks
     (ICLR 2022 under review) <https://arxiv.org/abs/2111.08851>`_.
 
@@ -52,8 +52,8 @@ def coral_loss(logits, levels, weight, reduction='mean'):
     return loss
 
 
-class Corn_loss(_WeightedLoss):
-    r"""Creates a criterion that measures The CORN loss between the target and the output.
+class Condor_loss(_WeightedLoss):
+    r"""Creates a criterion that measures The CONDOR loss between the target and the output.
     
     Args:
         weight (Tensor, optional): a manual rescaling weight given to the loss
@@ -76,7 +76,7 @@ class Corn_loss(_WeightedLoss):
 
     Examples::
 
-        >>> loss = Corn_loss()
+        >>> loss = Condor_loss()
         >>> logits = torch.tensor(
         ...    [[1., 1., 0., 0.],
         ...     [1., 0., 0., 0.],
@@ -91,7 +91,7 @@ class Corn_loss(_WeightedLoss):
 
     def __init__(self, weight: Optional[torch.Tensor] = None, size_average=None, 
                  reduce=None, reduction: str = 'mean') -> None:
-        super(Corn_loss, self).__init__(weight, size_average, reduce, reduction)
+        super(Condor_loss, self).__init__(weight, size_average, reduce, reduction)
 
     def forward(self, input: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
-        return coral_loss(input, target, weight=self.weight, reduction=self.reduction)
+        return condor_loss(input, target, weight=self.weight, reduction=self.reduction)
