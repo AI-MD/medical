@@ -34,7 +34,7 @@ def condor_loss(logits, levels, weight, reduction='mean'):
              + torch.log(1 - torch.exp(logprobs)+torch.finfo(torch.float32).eps)*(1-levels))
 
     if weight is not None:
-        term1 *= iweight
+        term1 *= weight
 
     val = (-torch.sum(term1, dim=1))
 
@@ -52,7 +52,7 @@ def condor_loss(logits, levels, weight, reduction='mean'):
     return loss
 
 
-class Condor_loss(_WeightedLoss):
+class CondorLoss(_WeightedLoss):
     r"""Creates a criterion that measures The CONDOR loss between the target and the output.
     
     Args:
@@ -76,7 +76,7 @@ class Condor_loss(_WeightedLoss):
 
     Examples::
 
-        >>> loss = Condor_loss()
+        >>> loss = CondorLoss()
         >>> logits = torch.tensor(
         ...    [[1., 1., 0., 0.],
         ...     [1., 0., 0., 0.],
@@ -91,7 +91,7 @@ class Condor_loss(_WeightedLoss):
 
     def __init__(self, weight: Optional[torch.Tensor] = None, size_average=None, 
                  reduce=None, reduction: str = 'mean') -> None:
-        super(Condor_loss, self).__init__(weight, size_average, reduce, reduction)
+        super(CondorLoss, self).__init__(weight, size_average, reduce, reduction)
 
     def forward(self, input: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
         return condor_loss(input, target, weight=self.weight, reduction=self.reduction)

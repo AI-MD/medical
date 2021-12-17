@@ -18,6 +18,7 @@ import torch.nn.functional as F
 
 from datasets import SagittalCT
 from common.model import OrdinalModel
+from common.loss import Condor_loss
 from common.lr_scheduler import CosineAnnealingWarmUpRestarts
 from utils.metric import ordinal_accuracy
 from utils.meter import AverageMeter, ProgressMeter
