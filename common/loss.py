@@ -2,7 +2,11 @@ import torch
 import torch.nn.functional as F
 from torch.nn.modules.loss import _WeightedLoss
 
-def condor_loss(logits, levels, weight, reduction='mean'):
+from typing import Optional
+
+
+def condor_loss(logits: torch.Tensor, levels:torch.Tensor, 
+                weight: Optional[torch.Tensor], reduction: str='mean') -> torch.Tensor:
     r"""Compute the CORN loss used in `Universally rank consistent ordinal regression in neural networks
     (ICLR 2022 under review) <https://arxiv.org/abs/2111.08851>`_.
 
@@ -30,8 +34,8 @@ def condor_loss(logits, levels, weight, reduction='mean'):
                          % (logits.shape, levels.shape))
 
     logprobs = torch.cumsum(F.logsigmoid(logits), dim = 1)
-    term1 = (logprobs*levels
-             + torch.log(1 - torch.exp(logprobs)+torch.finfo(torch.float32).eps)*(1-levels))
+    term1 = (logprobs * levels
+             + torch.log(1 - torch.exp(logprobs) + torch.finfo(torch.float32).eps) * (1 - levels))
 
     if weight is not None:
         term1 *= weight
@@ -52,7 +56,7 @@ def condor_loss(logits, levels, weight, reduction='mean'):
     return loss
 
 
-class CondorLoss(_WeightedLoss):
+class CONDORLoss(_WeightedLoss):
     r"""Creates a criterion that measures The CONDOR loss between the target and the output.
     
     Args:
@@ -76,7 +80,7 @@ class CondorLoss(_WeightedLoss):
 
     Examples::
 
-        >>> loss = CondorLoss()
+        >>> loss = CONDORLoss()
         >>> logits = torch.tensor(
         ...    [[1., 1., 0., 0.],
         ...     [1., 0., 0., 0.],
@@ -91,7 +95,7 @@ class CondorLoss(_WeightedLoss):
 
     def __init__(self, weight: Optional[torch.Tensor] = None, size_average=None, 
                  reduce=None, reduction: str = 'mean') -> None:
-        super(CondorLoss, self).__init__(weight, size_average, reduce, reduction)
+        super(CONDORLoss, self).__init__(weight, size_average, reduce, reduction)
 
     def forward(self, input: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
         return condor_loss(input, target, weight=self.weight, reduction=self.reduction)
