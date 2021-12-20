@@ -110,7 +110,7 @@ def main(args: argparse.Namespace):
 
     # evaluate on test set
     model.load_state_dict(torch.load(logger.get_checkpoint_path('best')))
-    acc = validate(model, val_loader, criterion, device, args)
+    acc = validate(model, val_loader, criterion, device, args, use_metric=True)
     print("test_accuracy = {:3.1f}".format(acc))
 
     logger.close()
