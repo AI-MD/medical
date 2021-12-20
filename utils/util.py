@@ -87,6 +87,6 @@ def logits_to_label(logits):
     Returns:
         class (torch.tensor): predicted class label
     """
-    probs = torch.cumpord(torch.sigmoid(logits), dim=1)
+    probs = torch.cumprod(torch.sigmoid(logits), dim=1)
     predicted_labels = prob_to_label(probs)
     return predicted_labels
