@@ -18,9 +18,9 @@ import torch.nn.functional as F
 
 from datasets import SagittalCT
 from common.model import OrdinalModel
-from common.loss import Condor_loss
+from common.loss import CONDORLoss
 from common.lr_scheduler import CosineAnnealingWarmUpRestarts
-from utils.metric import ordinal_accuracy
+from utils.metric import condor_accuracy
 from utils.meter import AverageMeter, ProgressMeter
 from utils.logger import CompleteLogger
 from utils.util import prepare_device, prob_to_label, levels_from_labelbatch
@@ -66,8 +66,8 @@ def main(args: argparse.Namespace):
                              train=True, transforms=train_transform)
     train_loader = DataLoader(dataset=train_dataset, batch_size=args.batch_size,
                               shuffle=True, num_workers=args.workers)
-    val_dataset = SagittalCT(data_dir=args.data_dir, w_min=-450, w_max=1000,
-                             train=False, transforms=test_transform)
+    val_dataset = SagittalCT(data_dir='/root/dataset/Osteoporosis/Sagittal_Contrast_Final_1', 
+                             w_min=-450, w_max=1000, train=False, transforms=test_transform)
     val_loader = DataLoader(dataset=val_dataset, batch_size=args.batch_size,
                             shuffle=False, num_workers=args.workers)
 
@@ -77,7 +77,7 @@ def main(args: argparse.Namespace):
     if len(device_ids) > 1:
         model = torch.nn.DataParallel(model, device_ids=device_ids)
 
-    criterion = nn.BCEWithLogitsLoss()
+    criterion = CONDORLoss()
     optimizer = Adam(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
     lr_scheduler = CosineAnnealingWarmUpRestarts(optimizer, T_0=10, T_mult=1,
                                                  eta_max=0.001, T_up=4, gamma=0.1)
@@ -111,7 +111,7 @@ def main(args: argparse.Namespace):
 
     # evaluate on test set
     model.load_state_dict(torch.load(logger.get_checkpoint_path('best')))
-    acc = validate(model, val_loader, criterion, device, args)
+    acc = validate(model, val_loader, criterion, device, args, True)
     print("test_accuracy = {:3.1f}".format(acc))
 
     logger.close()
@@ -146,8 +146,8 @@ def train(model: nn.Module, train_loader: DataLoader, criterion: nn.Module, opti
         levels = levels_from_labelbatch(target, args.num_classes)
         levels = levels.to(device)
         loss = criterion(output, levels)
-
-        acc = ordinal_accuracy(output, target)
+        
+        acc = condor_accuracy(output, target)
 
         losses.update(loss.item(), data.size(0))
         accs.update(acc, data.size(0))
@@ -196,7 +196,7 @@ def validate(model: nn.Module, val_loader: DataLoader, criterion: nn.Module,
             levels = levels_from_labelbatch(target, args.num_classes)
             levels = levels.to(device)
             loss = criterion(output, levels)
-            acc = ordinal_accuracy(output, target)
+            acc = condor_accuracy(output, target)
 
             losses.update(loss.item(), data.size(0))
             accs.update(acc, data.size(0))
@@ -210,6 +210,7 @@ def validate(model: nn.Module, val_loader: DataLoader, criterion: nn.Module,
         if use_metric:
             outputs = torch.cat(outputs, dim=0)
             targets = torch.cat(targets, dim=0)
+            outputs = torch.cumprod(outputs, dim=1)
             preds = prob_to_label(outputs)         
             
             outputs = outputs.cpu().numpy()
