@@ -2,73 +2,46 @@
     "name": "Capsule_Tesk_test",
     "n_gpu": 4,
 
-    "cls_noisy_resume": "/root/capsule_task/saved/models/EfficientNet_b5_ns_sam/0719_020558/model_best.pth",
-    "cls_noisy_result" :"dataset/capsule_task/train_cls_c15_c25_c35_soft/",
 
-    "cls_resume": "/root/capsule_task/saved/models/EfficientNet_b5_ns_sam/0719_092737/model_best.pth",
-        
-    "c1": 0.5,
-    "c2": 0.5,
-    "c3": 0.5,
 
-    
-    "cls_noisy_flag": false,
-    "cls_flag": true,
-    
+    "cls_noisy_resume" : "/root/capsule_task/saved/models/EfficientNet_b0_ns_sam_noisy_pillcam_1014_add/1014_033613/model_best.pth",
+    "cls_noisy_result" :"./kangwon_train_1215_99.txt",
+
+    "c1": 0.99,
+
+    "cls_noisy_flag": true,
+    "cls_flag": false,
+
     "tag" : "test",
-    
+
     "cls_noisy_arch": {
         "type": "Cls_Noisy_Model",
         "args": {
-            "model" : "tf_efficientnet_b5_ns",
-            "pretrained": true, 
-            "num_classes": 3
-        }
-    },
-    
-    "cls_nosiy_loader": {
-        "type": "NoisyDataDemoSigmoidLoader",
-        "args":{
-            "data_dir": "/dataset/capsule/",      
-            "batch_size": 256,
-            "size": [
-                512,
-                512
-            ],
-            "shuffle": false,
-            "validation_split": 0.1,
-            "num_workers": 16
-            
-            
+            "model" : "tf_efficientnet_b0_ns",
+            "pretrained": true,
+            "num_classes": 2
         }
     },
 
-    "cls_arch": {
-        "type": "Cls_Model",
-        "args": {
-            "model" : "tf_efficientnet_b5_ns",
-            "pretrained": true, 
-            "num_classes": 4
-        }
-    },
-    
-    "cls_loader": {
-        "type": "CapsuleDataLoader",
+    "cls_nosiy_loader": {
+        "type": "NoisyDataDemoSigmoidLoader",
         "args":{
-            "data_dir": "/dataset/capsule/",  
+            "data_dir": "/dataset/kanwon_pillcam_train/",
             "batch_size": 64,
-            "size": [456, 456],
-            "shuffle": true,
-            "validation_split": 0.1,
-            "num_workers": 4,
-            "training" : false,
-            "classes" : [0, 1, 2, 3]
-                 
+            "size": [
+                456,
+                456
+            ],
+            "shuffle": false,
+            "num_workers": 16
         }
     },
+
+
     "metrics": [
         "accuracy"
     ],
+
     "trainer": {
         "save_dir": "saved/"
     }

@@ -43,16 +43,23 @@ class Trainer(BaseTrainer):
         self.model.train()
         self.train_metrics.reset()
         
-        for batch_idx, (data, target) in enumerate(self.data_loader):
+        for batch_idx, (data, target, path) in enumerate(self.data_loader):
             
             data, target = data.to(self.device), target.to(self.device)
-           
-            # self.optimizer.zero_grad()
+            #time_index = time_index.to(self.device)
+
+
+            #inputs, targets_a, targets_b, lam = mixup_data(data, target,1, True)
+            
+            
+            #self.optimizer.zero_grad()
             with torch.cuda.amp.autocast(enabled=self.use_amp):
+                #output = self.model(data, time_index)
                 output = self.model(data)
-                
+                #loss = mixup_criterion(self.criterion, output, targets_a, targets_b, lam)
                 loss = self.criterion(output, target)
-               
+
+             
             if not torch.isfinite(loss):
                 print('WARNING: non_finite loss, ending training')
                 exit(1)
@@ -63,14 +70,16 @@ class Trainer(BaseTrainer):
             else:
                 loss.backward()
                 self.optimizer.first_step(zero_grad=True)
-
-                self.criterion(self.model(data), target).backward()
+                #self.optimizer.step()
+                self.criterion( self.model(data), target).backward()
                 self.optimizer.second_step(zero_grad=True)
+            
+            
 
             self.writer.set_step((epoch - 1) * self.len_epoch + batch_idx)
             self.train_metrics.update('loss', loss.item())
             for met in self.metric_ftns:
-                self.train_metrics.update(met.__name__, met(output, target))
+                self.train_metrics.update(met.__name__, met(output, target ))
 
             if batch_idx % self.log_step == 0:
                 self.logger.debug('Train Epoch: {} {} Loss: {:.6f}'.format(
@@ -88,7 +97,7 @@ class Trainer(BaseTrainer):
             log.update(**{'val_'+k : v for k, v in val_log.items()})
 
         if self.lr_scheduler is not None:
-            self.lr_scheduler.step()
+                self.lr_scheduler.step() 
         return log
 
     def _valid_epoch(self, epoch):
@@ -101,16 +110,18 @@ class Trainer(BaseTrainer):
         self.model.eval()
         self.valid_metrics.reset()
         with torch.no_grad():
-            for batch_idx, (data, target) in enumerate(self.valid_data_loader):
+            for batch_idx, (data, target, path) in enumerate(self.valid_data_loader):
                 data, target = data.to(self.device), target.to(self.device)
-
+                #time_index = time_index.to(self.device)
+                #inputs, targets_a, targets_b, lam = mixup_data(data, target,1, True)
                 output = self.model(data)
                 loss = self.criterion(output, target)
+                #loss = mixup_criterion(self.criterion, output, targets_a, targets_b, lam)
 
                 self.writer.set_step((epoch - 1) * len(self.valid_data_loader) + batch_idx, 'valid')
                 self.valid_metrics.update('loss', loss.item())
                 for met in self.metric_ftns:
-                    self.valid_metrics.update(met.__name__, met(output, target))
+                    self.valid_metrics.update(met.__name__, met(output, target ))
                 self.writer.add_image('input', make_grid(data.cpu(), nrow=8, normalize=True))
 
         # add histogram of model parameters to the tensorboard
@@ -127,3 +138,25 @@ class Trainer(BaseTrainer):
             current = batch_idx
             total = self.len_epoch
         return base.format(current, total, 100.0 * current / total)
+
+
+def mixup_data(x, y, alpha=1.0, use_cuda=True):
+    '''Returns mixed inputs, pairs of targets, and lambda'''
+    if alpha > 0:
+        lam = np.random.beta(alpha, alpha)
+    else:
+        lam = 1
+
+    batch_size = x.size()[0]
+    if use_cuda:
+        index = torch.randperm(batch_size).cuda()
+    else:
+        index = torch.randperm(batch_size)
+
+    mixed_x = lam * x + (1 - lam) * x[index, :]
+    y_a, y_b = y, y[index]
+    return mixed_x, y_a, y_b, lam
+
+
+def mixup_criterion(criterion, pred, y_a, y_b, lam):
+    return lam * criterion(pred, y_a) + (1 - lam) * criterion(pred, y_b)

@@ -1,29 +1,36 @@
 {
-    "name": "EfficientNet_b5_ns_sam",
+    "name": "EfficientNet_b0_ns_sam_noisy_pillcam_1025_add",
     "n_gpu": 4,
     "use_amp": false,
-
+    "class_test_name":["0_bile", "1_bubble", "2_debri","3_esophagus","4_gastric","5_duodenal","6_ileocecal"],
+    "class_test2_name":["0_noisy","3_esophagus","4_gastric","5_duodenal","6_ileocecal" ],
+    "class_test3_name":["0_noisy", "1_normal"],
     "arch": {
         "type": "Model",
         "args": {
-            "model": "tf_efficientnet_b5_ns",
+            "model": "tf_efficientnet_b0_ns",
             "pretrained": true, 
-            "num_classes": 3
+            "num_classes": 2
         }
     },
+    "pre_resume":"/root/capsule_task/saved/models/EfficientNet_b0_ns_sam_noisy_pillcam_0927_add/0927_081934/model_best.pth",
+    "resume" : "/root/capsule_task/saved/models/EfficientNet_b0_ns_sam_noisy_pillcam_1014_add/1014_033613/model_best.pth",
+    
     "data_loader": {
         "type": "NoisyDataSigmoidLoader",
         "args":{
-            "data_dir": "/dataset/capsule_noisy/",
-            "batch_size": 64,
+            "data_dir": "/dataset/pillcam_test_new_3/",
+            "batch_size": 96,
             "size": [456, 456],
             "shuffle": true,
             "validation_split": 0.1,
             "num_workers": 4,
             "training" : true,
-            "classes" : [0, 1, 2]
+            "classes" : [0, 1],
+            "class_names":["s1_noisy","s5_normal"]
         }
     },
+
     "optimizer": {
         "type": "SAM",
         "args":{
@@ -31,11 +38,13 @@
             "momentum": 0.9
         }
     },
-    "loss": "smooth_multilabel_loss",
+
+    "loss": "bce_loss",
 
     "metrics": [
         "accuracy"
     ],
+
     "lr_scheduler": {
         "type": "StepLR",
         "args": {

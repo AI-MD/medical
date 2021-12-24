@@ -56,20 +56,25 @@ class ConfigParser:
             args.add_argument(*opt.flags, default=None, type=opt.type)
         if not isinstance(args, tuple):
             args = args.parse_args()
+       
 
         if args.device is not None:
             os.environ["CUDA_VISIBLE_DEVICES"] = args.device
-        
+       
         msg_no_cfg = "Configuration file need to be specified. Add '-c config.json', for example."
         assert args.config is not None, msg_no_cfg
         resume = None
         cfg_fname = Path(args.config)
            
-        
+        # if args.resume is not None:
+            
+        #     resume = args.resume
+            
         config = read_json(cfg_fname)
         if args.config and resume:
             # update new config for fine-tuning
             config.update(read_json(args.config))
+        
 
         # parse custom cli options into dictionary
         modification = {opt.target : getattr(args, _get_opt_name(opt.flags)) for opt in options}
@@ -124,6 +129,7 @@ class ConfigParser:
     @property
     def save_dir(self):
         return self._save_dir
+    
 
     @property
     def log_dir(self):

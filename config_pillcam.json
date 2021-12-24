@@ -1,0 +1,84 @@
+{
+    "name": "tf_efficientnet_b0_ns_sam_1221_softmax_dataset_512_new",
+
+    "n_gpu": 4,
+    "use_amp": false,
+    "resume_normal":"/root/capsule_task/saved/models/tf_efficientnet_b0_ns_sam_1216_softmax_dataset_512_normal/1216_053733/model_best.pth",
+
+    "resume":"/root/capsule_task/saved/models/tf_efficientnet_b0_ns_sam_1216_softmax_dataset_512/1216_041546/model_best.pth",
+
+    "arch": {
+        "type": "Model",
+        "args": {
+            "model": "tf_efficientnet_b0_ns",
+            "pretrained": true, 
+            "num_classes": 4
+        }
+    },
+    
+    "data_loader": {
+        "type": "CapsulePillcamTrainDataLoader_duk",
+        "args":{
+            "data_dir": "/dataset/duk_test_data",
+            "batch_size": 128,
+            "size": [512, 512],
+            "shuffle": true,
+            "validation_split": 0.0,
+            "num_workers": 8,
+            "training" : true,
+            "classes" : [0, 1, 2, 3],
+            "class_names": ["0_esophagus", "1_gastric", "2_small_bowel", "3_colon"]
+        }
+    },
+
+     "valid_data_loader": {
+        "type": "CapsulePillcamTrainDataLoader",
+        "args":{
+            "data_dir": "/dataset/kanwon_pillcam_train/",
+            "batch_size": 128,
+            "size": [512, 512],
+            "shuffle": false,
+            "validation_split": 0.0,
+            "num_workers": 8,
+            "training" : false,
+            "classes" : [0, 1, 2, 3],
+            "class_names": ["0_esophagus", "1_gastric", "2_small_bowel", "3_colon"]
+        }
+    },
+
+    "optimizer": {
+        "type": "SAM",
+        "args":{
+            "lr": 0.01,
+            "momentum": 0.9
+        }
+    },
+    
+    "loss": "CrossEntropyLoss",
+    "loss_": "bce_loss",
+    "loss_CB": "CB_loss",
+
+    "metrics": [
+        "accuracy"
+    ],
+
+    "lr_scheduler": {
+        "type": "StepLR",
+        "args": {
+            "step_size": 50,
+            "gamma": 0.1
+        }
+    },
+    "trainer": {
+        "epochs": 10,
+
+        "save_dir": "saved/",
+        "save_period": 1,
+        "verbosity": 2,
+        
+        "monitor": "min val_loss",
+        "early_stop": -1,
+
+        "tensorboard": false
+    }
+}

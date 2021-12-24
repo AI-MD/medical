@@ -12,6 +12,8 @@ from trainer import Trainer
 from utils import prepare_device
 import tqdm
 
+
+
 # fix random seeds for reproducibility
 SEED = 123
 torch.manual_seed(SEED)
@@ -24,30 +26,41 @@ def main(config):
 
     # setup data_loader instances
     data_loader = config.init_obj('data_loader', module_data)
-    valid_data_loader = data_loader.split_validation()
+
+    valid_data_loader = config.init_obj('valid_data_loader', module_data)
 
     # build model architecture, then print to console
     model = config.init_obj('arch', module_arch)
     logger.info(model)
+    print(len(data_loader))
+    print(len(valid_data_loader))
 
     # prepare for (multi-device) GPU training 
     device, device_ids = prepare_device(config['n_gpu'])
     model = model.to(device)
     if len(device_ids) > 1:
         model = torch.nn.DataParallel(model, device_ids=device_ids)
-    
+
+    # logger.info('Loading checkpoint: {} ...'.format(config['resume']))
+    # checkpoint = torch.load(config['resume'])
+    # state_dict = checkpoint['state_dict']
+
+    #model.load_state_dict(state_dict)
+
     # check Automatic mixed precision
     use_amp = config['use_amp']
 
     # get function handles of loss and metrics
     criterion = getattr(module_loss, config['loss'])
-    #criterion = config.init_obj('loss', torch.nn)
+   
+    #criterion = config.init_obj('loss', module_loss)
     metrics = [getattr(module_metric, met) for met in config['metrics']]
 
     # build optimizer, learning rate scheduler. delete every lines containing lr_scheduler for disabling scheduler
     trainable_params = filter(lambda p: p.requires_grad, model.parameters())
     base_optimizer = torch.optim.SGD
     optimizer = config.init_obj('optimizer', module_optim, trainable_params, base_optimizer)
+    #optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     lr_scheduler = config.init_obj('lr_scheduler', torch.optim.lr_scheduler, optimizer)
 
     trainer = Trainer(model, criterion, metrics, optimizer,

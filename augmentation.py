@@ -82,9 +82,9 @@ def augment_data(images, size, save_path, augment=True):
             # augmented = aug(image=x)
             # x7 = augmented['image']
 
-            # aug = RandomBrightness(p=1)
-            # augmented = aug(image=x)
-            # x8 = augmented['image']
+            aug = RandomBrightness(p=1)
+            augmented = aug(image=x)
+            x8 = augmented['image']
 
             ## Transpose
             # aug = Transpose(p=1)
@@ -111,9 +111,9 @@ def augment_data(images, size, save_path, augment=True):
             # augmented = aug(image=x)
             # x14 = augmented['image']
 
-            # aug = GaussianBlur(p=1, blur_limit=10)
-            # augmented = aug(image=x)
-            # x15 = augmented['image']
+            aug = GaussianBlur(p=1, blur_limit=5)
+            augmented = aug(image=x)
+            x15 = augmented['image']
 
             # aug = GaussNoise(p=1)
             # augmented = aug(image=x)
@@ -124,8 +124,8 @@ def augment_data(images, size, save_path, augment=True):
             # x17 = augmented['image']
 
             images = [
-                x1, x2, #x3, 
-                #x4, x5, x6, x7, x8, x9, x10,
+                x1, x2, x8, x15 
+                #x4, x5, x6, x7, , x9, x10,
                 # x11, x12, x13, x14, x15, x16, x17, x18, x19, x20,
                 # x21
             ]
@@ -155,37 +155,41 @@ def delete_augmentations(root):
             os.remove(augment)
 
 def count_data(root):
-    classes = ["0", "1"]
-    paths = glob(os.path.join(root, "*"))
-    
-    data_0 = []
-    data_1 = []
-    for path in paths:
-        data_path = os.path.join(path, classes[0])
-        images_0 = glob(os.path.join(data_path, "*.png"))
-        data_0.extend(images_0)
+    classes = ["s1_noisy", "s5_normal"]
+   
 
-        data_path = os.path.join(path, classes[1])
-        images_1 = glob(os.path.join(data_path, "*.png"))
-        data_1.extend(images_1)
-
-    print("Number of class 0 : %d \nNumber of class 1 : %d" %(len(data_0), len(data_1)))
+    path_0 = (os.path.join(root, classes[0]))
+    path_1 = (os.path.join(root, classes[1]))
+    images_0 = glob(os.path.join(path_0, "*.png"))
+    images_1 = glob(os.path.join(path_1, "*.png"))   
+        
+    print("Number of class 0 : %d \nNumber of class 1 : %d" %(len(images_0), len(images_1)))
 
 def main():
     np.random.seed(42)
-    root = "/root/dataset/PAIP2021/classification_1/train/"
+    root = "/dataset/pillcam_sub_split/train/"
+    save_root = "/dataset/pillcam_sub_split_augment/train/"
     # delete_augmentations(root)
-    paths = glob(os.path.join(root, "*"))
+    
 
     print("Before Augmentation")
     count_data(root)
 
-    size = (598, 598)
-    for path in paths:
-        data_path = os.path.join(path, "1")
-        train_x = glob(os.path.join(data_path, "*.png"))
-        augment_data(train_x, size, data_path)
-
+    size = (456, 456)
+    classes = ["s1_noisy", "s5_normal"]
+    #path_0 = (os.path.join(root, classes[0]))
+    path_1 = (os.path.join(root, classes[1]))
+    #data_path_0 = os.path.join(save_root, classes[0])
+    data_path_1 = os.path.join(save_root, classes[1])
+    #images_0 = glob(os.path.join(path_0, "*.png"))
+    images_1 = glob(os.path.join(path_1, "*.png"))   
+   
+    #augment_data(images_0, size, data_path_0 )
+    augment_data(images_1, size, data_path_1 )
+   
+   
+         
+        
     print("After Augmentation")
     count_data(root)
 
