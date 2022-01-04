@@ -1,0 +1,105 @@
+{
+    "name": "Capsule_Tesk_test",
+    "n_gpu": 4,
+
+    "cls_noisy_pre_resume": "/root/capsule_task/saved/models/EfficientNet_b5_ns_sam/0719_020558/model_best.pth",
+    "cls_noisy_pre_result" :"/root/capsule_task/result_c17_c27_c37.txt",
+    
+    "cls_noisy_1_resume": "/root/capsule_task/saved/models/EfficientNet_b5_ns_sam_noisy/0818_015829/model_best.pth",
+    "cls_noisy_2_resume": "/root/capsule_task/saved/models/EfficientNet_b5_ns_sam_noisy_1/0818_021011/model_best.pth",
+  
+    "cls_noisy_3_resume": "/root/capsule_task/saved/models/EfficientNet_b5_ns_sam_noisy_2/0818_021647/model_best.pth",
+    
+    "cls_noisy_result" :"./result_pill_test_1014_3_99.txt",
+    
+    "cls_noisy_pre_2_resume":"/root/capsule_task/saved/models/EfficientNet_b0_ns_sam_noisy_pillcam_0927_add/0927_081934/model_best.pth",
+
+
+    "cls_noisy_resume" : "/root/capsule_task/saved/models/EfficientNet_b0_ns_sam_noisy_pillcam_1014_add/1014_033613/model_best.pth",
+    
+    
+    "cls_noisy_add_2_resume":"/root/capsule_task/saved/models/EfficientNet_b5_ns_sam_noisy_5_0831/0831_045044/model_best.pth",
+
+    "cls_all_b0_resume": "/root/capsule_task/saved/models/tf_efficientnet_b0_Adam/0726_072648/model_best.pth",
+    "cls_all_b5_resume":"/root/capsule_task/saved/models/EfficientNet_b5_ns_sam/0719_092737/model_best.pth" ,
+    
+    "cls_b0_resume" :"/root/capsule_task/saved/models/tf_efficientnet_b0_Adam/0727_062801/model_best.pth",
+    "cls_b5_resume" :"/root/capsule_task/saved/models/tf_efficientnet_b5_ns_sam_new/0728_103642/model_best.pth",
+    "cls_3_7_resume": "/root/capsule_task/saved/models/tf_efficientnet_b5_ns_sam_0823_normal/0823_030046/model_best.pth",
+    "cls_normal_resume": "/root/capsule_task/saved/models/tf_efficientnet_b5_ns_sam_0824_normal/0824_053654/model_best.pth",
+    "cls_b5_mixup_resume":  "/root/capsule_task/saved/models/tf_efficientnet_b5_ns_sam_0826_new_data_augmentation_mixup/0827_075614/model_best.pth",
+    
+    "cls_b0_new_resume":"/root/capsule_task/saved/models/tf_efficientnet_b0_ns_sam_0831_new/0831_084859/model_best.pth",
+    "cls_pre_2_resume":"/root/capsule_task/saved/models/tf_efficientnet_b5_ns_sam_0906_normal_new/0906_100305/model_best.pth",
+    "cls_resume_pre":"/root/capsule_task/saved/models/tf_efficientnet_b0_ns_sam_1019_normal_new/1025_064804/checkpoint-epoch6.pth",
+
+    "cls_resume_crossentropy_softmax":"/root/capsule_task/saved/models/tf_efficientnet_b5_ns_sam_1108_normal_new_softmax_new/1108_023747/model_best.pth",
+    "cls_resume_CB_softmax":"/root/capsule_task/saved/models/tf_efficientnet_b5_ns_sam_1108_normal_new_softmax/1108_015358/model_best.pth",
+    
+    "cls_resume_cbloss_sigmoid":"/root/capsule_task/saved/models/tf_efficientnet_b5_ns_sam_1104_normal_new_CBLOSS/1104_074651/model_best.pth",
+    "cls_resume": "/root/capsule_task/saved/models/tf_efficientnet_b5_ns_sam_1108_normal_new_softmax_new_pretrain/1108_054742/checkpoint-epoch5",
+
+    "c1": 0.99,
+    "c2": 0.05,
+    "c3": 0.7,
+    
+    "cls_noisy_flag": true,
+    "cls_flag": false,
+    
+    "tag" : "test",
+    
+    "cls_noisy_arch": {
+        "type": "Cls_Noisy_Model",
+        "args": {
+            "model" : "tf_efficientnet_b0_ns",
+            "pretrained": true, 
+            "num_classes": 2
+        }
+    },
+    
+    "cls_nosiy_loader": {
+        "type": "NoisyDataDemoSigmoidLoader",
+        "args":{
+            "data_dir": "/dataset/duk_pillcam_test/",
+            "batch_size": 64,
+            "size": [
+                456,
+                456
+            ],
+            "shuffle": false,     
+            "num_workers": 16        
+        }
+    },
+
+    "cls_arch": {
+        "type": "Cls_Model",
+        "args": {
+            "model" : "tf_efficientnet_b5_ns",
+            "pretrained": true, 
+            "num_classes": 4
+        }
+    },
+    
+    "cls_loader": {
+        "type": "CapsulePillcamTrainDataLoader",
+        "args":{
+            "data_dir": "/dataset/pillcam_train_dataset/",
+            "batch_size": 64,
+            "size": [456, 456],
+            "shuffle": true,
+            "validation_split": 0.0,
+            "num_workers": 16,
+            "training" : false,
+            "classes" : [0, 1, 2, 3],
+            "class_names": ["0_esophagus", "1_gastric", "2_small_bowel", "3_colon"]
+        }
+    },
+
+    "metrics": [
+        "accuracy"
+    ],
+
+    "trainer": {
+        "save_dir": "saved/"
+    }
+}

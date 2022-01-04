@@ -1,0 +1,37 @@
+{
+    "name": "gradcam_kangwon_1206",
+    "n_gpu": 4,
+    "use_amp": false,
+
+    "resume":"/root/capsule_task/saved/models/tf_efficientnet_b0_ns_sam_1216_softmax_dataset_512/1216_041546/model_best.pth",
+    "image_path": "./duk_pillcam_test_512_1217_all/1_gastric/0_esophagus/",
+
+    "arch": {
+        "type": "Model",
+        "args": {
+            "model": "tf_efficientnet_b0_ns",
+            "pretrained": true,
+            "num_classes": 4
+        }
+    },
+   "loss": "CrossEntropyLoss",
+   "metrics": [
+        "accuracy"
+    ],
+  
+     "trainer": {
+        "epochs": 10,
+
+        "save_dir": "saved/",
+        "save_period": 1,
+        "verbosity": 2,
+
+        "monitor": "min val_loss",
+        "early_stop": -1,
+
+        "tensorboard": false
+    }
+
+
+
+}
