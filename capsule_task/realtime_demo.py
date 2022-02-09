@@ -25,6 +25,8 @@ from torchvision import transforms
 from PIL import Image
 from pathlib import Path
 
+from utils import prepare_device
+
 
 def main(config):
     logger = config.get_logger('test')
@@ -36,38 +38,48 @@ def main(config):
         transforms.Normalize(mean=[0.3960, 0.2987, 0.3811], std=[0.1301, 0.1792, 0.1275]),
     ])
 
-    # build model architecture
-    model = config.init_obj('arch', module_arch)
-    logger.info(model)
+    device, device_ids = prepare_device(config['n_gpu'])
 
-    logger.info('Loading checkpoint: {} ...'.format(config['resume']))
-    checkpoint = torch.load(config['resume'])
+    # build model architecture, then print to console
+    CRNN_model = config.init_obj('crnn_arch', module_arch, device=device)
+
+    logger.info('Loading checkpoint: {} ...'.format(config['test_resume']))
+    checkpoint = torch.load(config['test_resume'])
     state_dict = checkpoint['state_dict']
 
-    if config['n_gpu'] > 1:
-        model = torch.nn.DataParallel(model)
-    model.load_state_dict(state_dict)
-    logger.info(model)
-    # prepare model for testing
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model = model.to(device)
-    model.eval()
+    CRNN_model.load_state_dict(state_dict)
+    if len(device_ids) > 1:
+        CRNN_model = torch.nn.DataParallel(CRNN_model, device_ids=device_ids)
 
-    # Retreive 9 random images from directory
+    CRNN_model = CRNN_model.to(device)
+    CRNN_model.eval()
+
     files = Path(config['image_path']).resolve().glob('*.*')
 
     images = list(files)
 
-
+    inputs_images = []
 
     for num, img in enumerate(images):
-        image = Image.open(os.path.abspath(img)).convert('RGB')
-      
+        if num < 32:
+            image = Image.open(os.path.abspath(img)).convert('RGB')
 
-        inputs = preprocess(image).unsqueeze(0).to(device)
+            inputs = preprocess(image)
 
+            inputs_images.append(inputs)
+        else:
+            break
 
+    inputs_images = torch.stack(inputs_images, dim=0)
+    inputs_images = inputs_images.unsqueeze(0).to(device)
 
+    output = CRNN_model(inputs_images)
+
+    outputs = torch.softmax(output, dim=2)
+
+    pred = torch.argmax(outputs, dim=2)
+
+    ## 몇장씩 볼지 확인
 
 
 if __name__ == '__main__':
