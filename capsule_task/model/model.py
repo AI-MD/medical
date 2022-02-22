@@ -46,7 +46,6 @@ class CustomModel(BaseModel):
         feature = self.model.forward_features(x)  # feature out
 
         out = self.logits(feature, time_index)
-
         return out
 
 

@@ -6,13 +6,13 @@ import data_loader.data_loaders as module_data
 import model.loss as module_loss
 import model.metric as module_metric
 import model.model as module_arch
-import model.optimizer as module_optim
+
 from parse_config import ConfigParser
-from trainer.video_trainer import VideoTrainer
+
 from utils import prepare_device
 from tqdm import tqdm
-from sklearn.metrics import confusion_matrix, multilabel_confusion_matrix
-from sklearn.metrics import classification_report
+from sklearn.metrics import confusion_matrix
+
 from sklearn.metrics import f1_score , precision_score,recall_score,roc_auc_score
 
 # fix random seeds for reproducibility
@@ -24,18 +24,18 @@ np.random.seed(SEED)
 
 
 def main(config):
-    logger = config.get_logger('train')
+    logger = config.get_logger('test')
 
     # setup data_loader instances
     data_loader = getattr(module_data, config['data_loader']['type'])(
         config['data_loader']['args']['data_dir'],
-        num_clip = 16,
-        batch_size=32,
+        num_clip =config['data_loader']['args']['num_clip'],
+        batch_size = config['data_loader']['args']['batch_size'],
         size=config['data_loader']['args']['size'],
         shuffle=False,
         validation_split=0.0,
         training=False,
-        num_workers=8,
+        num_workers=1,
         classes=config['data_loader']['args']['classes']
     )
 
@@ -55,20 +55,14 @@ def main(config):
     checkpoint = torch.load(config['test_resume'])
     state_dict = checkpoint['state_dict']
 
-    CRNN_model.load_state_dict(state_dict)
-
-
-    CRNN_model.eval()
-
-
-
-    CRNN_model = CRNN_model.to(device)
-
-
+    CRNN_model.load_state_dict(state_dict,strict=False)
 
     if len(device_ids) > 1:
         CRNN_model = torch.nn.DataParallel(CRNN_model, device_ids=device_ids)
 
+    CRNN_model = CRNN_model.to(device)
+
+    CRNN_model.eval()
 
     loss_fn = getattr(module_loss, config['loss'])
     metric_fns = [getattr(module_metric, met) for met in config['metrics']]
@@ -84,7 +78,7 @@ def main(config):
 
     total_metrics = torch.zeros(len(metric_fns))
 
-    for i, (data, target) in enumerate(tqdm(data_loader)):
+    for i, (data, target, paths) in enumerate(tqdm(data_loader)):
         data, target = data.to(device), target.to(device)
 
         output = CRNN_model(data)
@@ -105,6 +99,8 @@ def main(config):
         total_loss += loss.item() * batch_size
         for i, metric in enumerate(metric_fns):
             total_metrics[i] += metric(output, target) * batch_size
+            print(total_metrics[i])
+
 
     log = {'loss': total_loss / n_samples}
 

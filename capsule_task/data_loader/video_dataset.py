@@ -77,10 +77,12 @@ class capsule_Video_duk(VisionDataset):
     def build_images(self, frames):
         X = []
         labels = []
+
+        paths = []
         for frame in frames:
             path, target = frame
             image = Image.open(path).convert('RGB')
-
+            paths.append(path)
             labels.append(target)
 
             if self.transform is not None:
@@ -90,21 +92,21 @@ class capsule_Video_duk(VisionDataset):
         X = torch.stack(X, dim=0)
 
 
-        return X, labels
+        return X, labels, paths
 
     def __getitem__(self, index: int) -> Tuple[Any, Any]:
 
 
-        images, targets = self.build_images(self.video_samples[index])
+        images, targets, paths = self.build_images(self.video_samples[index])
 
         targets = torch.tensor(targets)
         #targets = torch.unsqueeze(targets, -1)
         # one_hot_target = to_one_hot_vector(len(self.classes), target)
 
         if self.train:
-            return images, targets
+            return images, targets, paths
 
-        return images, targets
+        return images, targets, paths
 
     def __len__(self) -> int:
         return len(self.video_samples)
@@ -171,10 +173,11 @@ class capsule_Video(VisionDataset):
     def build_images(self, frames):
         X = []
         labels = []
+        paths = []
         for frame in frames:
             path, target = frame
             image = Image.open(path).convert('RGB')
-
+            paths.append(path)
             labels.append(target)
 
             if self.transform is not None:
@@ -182,12 +185,12 @@ class capsule_Video(VisionDataset):
             X.append(image.squeeze_(0))
         X = torch.stack(X, dim=0)
 
-        return X, labels
+        return X, labels, paths
 
     def __getitem__(self, index: int) -> Tuple[Any, Any]:
 
 
-        images, targets = self.build_images(self.video_samples[index])
+        images, targets, paths = self.build_images(self.video_samples[index])
 
         targets = torch.tensor(targets)
         # targets = torch.unsqueeze(targets, -1)
@@ -197,9 +200,9 @@ class capsule_Video(VisionDataset):
         # one_hot_target = to_one_hot_vector(len(self.classes), target)
 
         if self.train:
-            return images, targets
+            return images, targets, paths
 
-        return images, targets
+        return images, targets, paths
 
     def __len__(self) -> int:
         return len(self.video_samples)

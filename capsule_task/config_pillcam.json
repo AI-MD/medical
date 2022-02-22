@@ -1,8 +1,9 @@
 {
-    "name": "tf_efficientnet_b0_ns_sam_0104_softmax_dataset_512_3",
+    "name": "tf_efficientnet_b0_ns_sam_0216_softmax_dataset_512_3_mixup",
 
     "n_gpu": 1,
     "use_amp": false,
+    "resume" :"./saved/models/tf_efficientnet_b0_ns_sam_0216_softmax_dataset_512_3_mixup/0216_112134/model_best.pth",
 
     "arch": {
         "type": "Model",
@@ -16,30 +17,30 @@
     "data_loader": {
         "type": "CapsulePillcamTrainDataLoader",
         "args":{
-            "data_dir": "D://capsule_data_2022/kangwon_pillcam_train_2022/",
-            "batch_size": 16,
+            "data_dir": "D:/capsule_data_2022/kangwon_pillcam_train_2022/",
+            "batch_size": 8,
             "size": [512, 512],
             "shuffle": true,
             "validation_split": 0.0,
-            "num_workers": 16,
+            "num_workers": 8,
             "training" : true,
-            "classes" : [0, 1, 2],
-            "class_names": ["1", "2", "3"]
+            "classes" : [1, 2, 3],
+            "class_names":  [1, 2, 3]
         }
     },
 
      "valid_data_loader": {
         "type": "CapsulePillcamTrainDataLoader_duk",
         "args":{
-            "data_dir": "D://capsule_data_2022/duk_test_dataset/",
+            "data_dir": "D:/capsule_data_2022/duk_test_dataset/",
             "batch_size": 16,
             "size": [512, 512],
             "shuffle": false,
             "validation_split": 0.0,
             "num_workers": 8,
             "training" : false,
-            "classes" : [0, 1, 2],
-            "class_names": ["1", "2", "3"]
+            "classes" : [1, 2, 3],
+            "class_names":  [1, 2, 3]
         }
     },
 
@@ -56,7 +57,7 @@
     "loss_CB": "CB_loss",
 
     "metrics": [
-        "mixup_accuracy"
+        "accuracy"
     ],
 
     "lr_scheduler": {
@@ -67,7 +68,7 @@
         }
     },
     "trainer": {
-        "epochs": 100,
+        "epochs": 20,
 
         "save_dir": "saved/",
         "save_period": 1,

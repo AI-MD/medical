@@ -50,17 +50,17 @@ def pillcam_make_dataset(directory:str, extensions:str, class_names) -> List[Tup
     instances = []
     
     for root, _, fnames in sorted(os.walk(directory, followlinks=True)):
-      
+
         for fname in sorted(fnames):
             path = os.path.join(root, fname)
-            
+
             if path.lower().endswith(extensions):
-               
+
                 for idx, name in enumerate(class_names):
 
-                    if class_names[idx] == os.path.basename(directory):
+                    if class_names[idx] == int(os.path.basename(directory)):
                         item = path, idx
-
+                        #print(item)
                         instances.append(item)
 
     return instances

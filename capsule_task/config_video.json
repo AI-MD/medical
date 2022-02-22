@@ -1,15 +1,21 @@
 {
-    "name": "tf_efficientnet_b0_ns_sam_0104_softmax_dataset_512_3_video",
+    "name": "tf_efficientnet_b0_ns_sam_0214_softmax_dataset_512_3_video",
 
     "n_gpu": 1,
     "use_amp": false,
+    "backbone_resume" :"./saved/models/tf_efficientnet_b0_ns_sam_0216_softmax_dataset_512_3_mixup/0216_112134/model_best.pth",
+    "test_resume": "./saved/models/tf_efficientnet_b0_ns_sam_0214_softmax_dataset_512_3_video/0217_124632/model_best.pth",
 
-    "arch": {
-        "type": "Model",
+    "crnn_arch": {
+        "type": "CRNN",
         "args": {
             "model": "tf_efficientnet_b0_ns",
-            "pretrained": true,
-            "num_classes": 3
+            "embed_size": 1280,
+            "LSTM_UNITS": 64,
+            "num_layer": 2,
+            "num_classes": 3,
+            "pretrained" :  true
+
         }
     },
 
@@ -17,12 +23,12 @@
         "type": "CapsulePillcamVideoTrainDataLoader",
         "args":{
             "data_dir": "D:/capsule_data_2022/kangwon_pillcam_train_2022/",
-            "num_clip": 16,
-            "batch_size": 1,
+            "num_clip": 32,
+            "batch_size": 16,
             "size": [512, 512],
             "shuffle": true,
             "validation_split": 0.0,
-            "num_workers": 8,
+            "num_workers": 4,
             "training" : true,
             "classes" : [1, 2, 3],
             "class_names":[1, 2, 3]
@@ -33,26 +39,19 @@
         "type": "CapsulePillcamVideoTrainDataLoader_duk",
         "args":{
             "data_dir": "D:/capsule_data_2022/duk_test_dataset/",
-            "num_clip": 16,
-            "batch_size": 1,
+             "num_clip": 32,
+            "batch_size": 16,
             "size": [512, 512],
             "shuffle": false,
             "validation_split": 0.0,
-            "num_workers": 8,
+            "num_workers": 4,
             "training" : false,
             "classes" : [1, 2, 3],
             "class_names": [1, 2, 3]
         }
     },
 
-    "optimizer": {
-        "type": "SAM",
-        "args":{
-            "lr": 0.01,
-            "momentum": 0.9
-        }
-    },
-
+    
     "loss": "CrossEntropyLoss",
     "loss_": "bce_loss",
     "loss_CB": "CB_loss",
@@ -69,7 +68,7 @@
         }
     },
     "trainer": {
-        "epochs": 100,
+        "epochs": 20,
 
         "save_dir": "saved/",
         "save_period": 1,

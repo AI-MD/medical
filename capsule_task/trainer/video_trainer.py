@@ -46,7 +46,7 @@ class VideoTrainer(BaseTrainer):
         self.model.train()
         self.train_metrics.reset()
 
-        for batch_idx, (data, target) in enumerate(self.data_loader):
+        for batch_idx, (data, target, paths)  in enumerate(self.data_loader):
 
             data, target = data.to(self.device), target.to(self.device)
 
@@ -111,7 +111,7 @@ class VideoTrainer(BaseTrainer):
         self.model.eval()
         self.valid_metrics.reset()
         with torch.no_grad():
-            for batch_idx, (data, target) in enumerate(self.valid_data_loader):
+            for batch_idx, (data, target, paths) in enumerate(self.valid_data_loader):
                 data, target = data.to(self.device), target.to(self.device)
 
 

@@ -56,7 +56,7 @@ def main(config):
     # base_optimizer = torch.optim.SGD
     # optimizer = config.init_obj('optimizer', module_optim, trainable_params, base_optimizer)
 
-    optimizer = torch.optim.Adam(CRNN_model.parameters(), lr=0.001)
+    optimizer = torch.optim.Adam(CRNN_model.parameters(), lr=0.01)
     lr_scheduler = config.init_obj('lr_scheduler', torch.optim.lr_scheduler, optimizer)
 
     model = CRNN_model

@@ -8,21 +8,12 @@ import model.loss as module_loss
 import model.metric as module_metric
 import model.model as module_arch
 from parse_config import ConfigParser
-import skimage.io as io
-import csv
-import numpy as np
-from sklearn.metrics import confusion_matrix, multilabel_confusion_matrix
-from sklearn.metrics import classification_report
+
+from sklearn.metrics import confusion_matrix
+
 from sklearn.metrics import f1_score , precision_score,recall_score,roc_auc_score
-#from utils.pa_grad_cam import GradCAM
-from utils.util import visualize_cam
-from utils.gradcam import GradCAM, GradCAMpp
-#from utils.grad_cam import  GradCam
-import torch.nn.functional as F
-from torchvision.utils import make_grid, save_image
-import shutil
-import torch.nn as nn
-from utils import collect_feature, tsne
+
+
 
 
 def main(config):
@@ -31,12 +22,12 @@ def main(config):
     # setup data_loader instances
     data_loader = getattr(module_data, config['data_loader']['type'])(
         config['data_loader']['args']['data_dir'],
-        batch_size=32,
+        batch_size= config['data_loader']['args']['batch_size'],
         size=config['data_loader']['args']['size'],
         shuffle=False,
         validation_split=0.0,
         training=False,
-        num_workers=16,
+        num_workers=8,
         classes = config['data_loader']['args']['classes'],
         class_names = config['data_loader']['args']['class_names']
     )
@@ -182,6 +173,7 @@ def main(config):
         loss = loss_fn(output, target)
         batch_size = data.shape[0]
         total_loss += loss.item() * batch_size
+
         for i, metric in enumerate(metric_fns):
             total_metrics[i] += metric(output, target) * batch_size
 
