@@ -13,22 +13,6 @@ from pathlib import Path
 from utils import prepare_device
 
 
-def __draw_label(img, text, pos, bg_color):
-    font_face = cv2.FONT_HERSHEY_SIMPLEX
-    scale = 0.4
-    color = (0, 0, 0)
-    thickness = cv2.FILLED
-    margin = 2
-
-    txt_size = cv2.getTextSize(text, font_face, scale, thickness)
-
-    end_x = pos[0] + txt_size[0][0] + margin
-    end_y = pos[1] - txt_size[0][1] - margin
-
-    cv2.rectangle(img, pos, (end_x, end_y), bg_color, thickness)
-    cv2.putText(img, text, pos, font_face, scale, color, 1, cv2.LINE_AA)
-
-
 def main(config):
     logger = config.get_logger('test')
 
@@ -96,9 +80,9 @@ def main(config):
                 retval, frame = cap.read()
                 frame_index = int(frame_index) + 1
 
-                if frame_index < config['clip_num']:
+                if frame_index % config['clip_num'] == 0:
                     pred_count = [0, 0, 0]
-
+   
                 if not (retval):  # 프레임정보를 정상적으로 읽지 못하면
                     break  # while문을 빠져나가기
 
@@ -114,7 +98,6 @@ def main(config):
 
                 pred_index = _predict_idx.cpu().numpy()
 
-
                 if len(pred_index) > 0 : #해당 인덱스 count
                     if stomach_flag ==False and int(pred_index[0]) == 0:
                         pred_count[int(pred_index[0])] += 1
@@ -122,7 +105,6 @@ def main(config):
                         pred_count[int(pred_index[0])]+= 1
                     if small_bowel_flag and int(pred_index[0]) ==2:
                         pred_count[int(pred_index[0])] += 1
-
 
                 if pred_count[0] > config['first_stomach']:
                     stomach_flag = True
