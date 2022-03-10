@@ -69,7 +69,7 @@ class CRNN(BaseModel):
         self.linear_out = nn.Linear(LSTM_UNITS * 2, num_classes)
         self.device = device
 
-    def forward(self, x_3d, init_states = None):
+    def forward(self, x_3d, init_states = None, training_flag = False):
 
         cnn_embed_seq = []
         for t in range(x_3d.size(1)):
@@ -90,7 +90,12 @@ class CRNN(BaseModel):
             h_0, c_0 = init_states
 
         self.lstm1.flatten_parameters()
-        h_lstm1, (h1, c1) = self.lstm1(cnn_embed_seq, (h_0, c_0))
+
+        if training_flag:
+            h_lstm1, (h1, c1) = self.lstm1(cnn_embed_seq, (h_0, c_0))
+        else:
+            h_lstm1, (h1, c1) = self.lstm1(cnn_embed_seq)
+
         self.lstm2.flatten_parameters()
         h_lstm2, _ = self.lstm2(h_lstm1, (h1, c1))
 
