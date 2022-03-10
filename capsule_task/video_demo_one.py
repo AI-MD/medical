@@ -105,7 +105,7 @@ def main(config):
                 output = CRNN_model(inputs_torch)
                 outputs = torch.softmax(output, dim=2)
 
-                #num_clip 중
+
                 _, _array_idx, _predict_idx = torch.where(outputs > config['cls_threshold'])
 
                 pred_index = _predict_idx.cpu().numpy()
