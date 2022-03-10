@@ -1,20 +1,16 @@
 {
-    "name": "tf_efficientnet_b0_ns_sam_0308_softmax_dataset_512_3_video",
-
+    "name": "tf_efficientnet_b0_ns_sam_0214_softmax_dataset_512_3_video",
     "n_gpu": 1,
     "use_amp": false,
-    "backbone_resume" :"./saved/models/tf_efficientnet_b0_ns_sam_0210_softmax_dataset_512_3_no_mixup/0210_065249/model_best.pth",
+    "backbone_resume": "./saved/models/tf_efficientnet_b0_ns_sam_0210_softmax_dataset_512_3_no_mixup/0210_065249/model_best.pth",
     "test_resume": "./saved/models/tf_efficientnet_b0_ns_sam_0224_softmax_dataset_512_3_video/0224_142446/model_best.pth",
-
     "image_path": "D:/capsule_data_2022/kangwon_pillcam_train_2022/test/case29/",
     "video_path": "D:/capsule_data_2022/kangwon_test/",
-
-    "clip_num" : 120,
-    "cls_threshold" : 0.95,
+    "clip_num": 72,
+    "cls_threshold": 0.95,
     "first_stomach": 64,
-    "first_small_bowel" :120,
-    "first_colon": 120,
-
+    "first_small_bowel": 64,
+    "first_colon": 64,
     "crnn_arch": {
         "type": "CRNN",
         "args": {
@@ -23,18 +19,15 @@
             "LSTM_UNITS": 64,
             "num_layer": 2,
             "num_classes": 3,
-            "pretrained" :  true
+            "pretrained": true
         }
     },
-
     "loss": "CrossEntropyLoss",
     "loss_": "bce_loss",
     "loss_CB": "CB_loss",
-
     "metrics": [
         "accuracy"
     ],
-
     "lr_scheduler": {
         "type": "StepLR",
         "args": {
@@ -44,14 +37,11 @@
     },
     "trainer": {
         "epochs": 20,
-
         "save_dir": "saved/",
         "save_period": 1,
         "verbosity": 2,
-
         "monitor": "min val_loss",
         "early_stop": -1,
-
         "tensorboard": false
     }
 }

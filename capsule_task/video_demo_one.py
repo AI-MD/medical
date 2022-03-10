@@ -12,6 +12,7 @@ from pathlib import Path
 
 from utils import prepare_device
 
+
 def __draw_label(img, text, pos, bg_color):
     font_face = cv2.FONT_HERSHEY_SIMPLEX
     scale = 0.4
@@ -26,7 +27,8 @@ def __draw_label(img, text, pos, bg_color):
 
     cv2.rectangle(img, pos, (end_x, end_y), bg_color, thickness)
     cv2.putText(img, text, pos, font_face, scale, color, 1, cv2.LINE_AA)
-    
+
+
 def main(config):
     logger = config.get_logger('test')
 
@@ -46,7 +48,7 @@ def main(config):
     checkpoint = torch.load(config['test_resume'])
     state_dict = checkpoint['state_dict']
 
-    CRNN_model.load_state_dict(state_dict,strict=False)
+    CRNN_model.load_state_dict(state_dict, strict=False)
     if len(device_ids) > 1:
         CRNN_model = torch.nn.DataParallel(CRNN_model, device_ids=device_ids)
 
@@ -55,7 +57,7 @@ def main(config):
 
     check = False
     check_list = []
-    label = ["식도","위", "소장", "대장"]
+    label = ["식도", "위", "소장", "대장"]
     pred_label = ["위", "소장", "대장", "none"]
 
     stomach_flag = False
@@ -69,93 +71,88 @@ def main(config):
         path_list = sorted(fnames)
 
         for num, fname in enumerate(path_list):
+            path = os.path.join(root, fname)
+
             check_1 = False
             check_2 = False
             check_3 = False
-            path = os.path.join(root, fname)
 
             cap = cv2.VideoCapture(path)
             fps = cap.get(cv2.CAP_PROP_FPS);
             frameWidth = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))  # 영상의 넓이(가로) 프레임
             frameHeight = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))  # 영상의 높이(세로) 프레임
-            last_frame_count = int(cv2.CAP_PROP_FRAME_COUNT)
+
             frame_size = (frameWidth, frameHeight)
 
             out = cv2.VideoWriter(os.path.join("./", fname), fcc, fps, frame_size)
 
             pred_count = [0, 0, 0]
 
-            inputs_images = []
+            result_images = []
             cls_display = ""
-
             frame_index = 0
+
             while True:
                 retval, frame = cap.read()
-                frame_index= int(frame_index) +1
+                frame_index = int(frame_index) + 1
                 if not (retval):  # 프레임정보를 정상적으로 읽지 못하면
                     break  # while문을 빠져나가기
 
-                if len(inputs_images) < config['clip_num']:
-                    frame_index = format(int(frame_index), '06')
-                    #cv2.imwrite("./test/"+frame_index+".jpg",frame)
-                    color_cvt = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                    pil_src = Image.fromarray(color_cvt)
-                    inputs = preprocess(pil_src)
-                    inputs_images.append(inputs)
-                   
-                if len(inputs_images) == config['clip_num'] or num == (last_frame_count - 1):
+                pil_src = Image.fromarray(frame)
+                inputs = preprocess(pil_src).unsqueeze(0)
 
-                    check = True
+                inputs_torch = inputs.unsqueeze(0).to(device)
+                output = CRNN_model(inputs_torch)
+                outputs = torch.softmax(output, dim=2)
 
-                if check:
-                    inputs_torch_images = torch.stack(inputs_images, dim=0)
-                    inputs_torch_images = inputs_torch_images.unsqueeze(0).to(device)
+                #num_clip 중
+                _, _array_idx, _predict_idx = torch.where(outputs > config['cls_threshold'])
 
-                    output = CRNN_model(inputs_torch_images)
+                pred_index = _predict_idx.cpu().numpy()
 
-                    outputs = torch.softmax(output, dim=2)
+                if len(pred_index) > 0 : #해당 인덱스 count
+                    if stomach_flag ==False and int(pred_index[0]) == 0:
+                        pred_count[int(pred_index[0])] += 1
+                    if stomach_flag and int(pred_index[0]) == 1:
+                        pred_count[int(pred_index[0])]+= 1
+                    if small_bowel_flag and int(pred_index[0]) ==2:
+                        pred_count[int(pred_index[0])] += 1
 
-                    _, _array_idx, _predict_idx = torch.where(outputs > config['cls_threshold']) # how to measure threshold
 
-                    pred_list = _predict_idx.cpu().numpy().tolist()
+                if pred_count[0] > config['first_stomach']:
+                    stomach_flag = True
+                if pred_count[1] > config['first_small_bowel'] and stomach_flag:
+                    small_bowel_flag = True
+                if pred_count[2] > config['first_colon'] and stomach_flag and small_bowel_flag:
+                    colon_flag = True
 
-                    if len(pred_list) == 0:
-                        print(pred_label[3])
-                    else:
-                        #print(pred_list.count(0), pred_list.count(1), pred_list.count(2))
-                        if pred_list.count(0) > config['first_stomach']:
-                            stomach_flag = True
-                        if pred_list.count(1) > config['first_small_bowel'] and stomach_flag:
-                            small_bowel_flag = True
-                        if pred_list.count(2) > config['first_colon'] and stomach_flag and small_bowel_flag:
-                            colon_flag = True
-                        if stomach_flag and small_bowel_flag == False and colon_flag == False:
-                            cls_display = "first_stomach"
-                            if check_1 == False:
-                                cv2.imwrite("./test/" +fname+"first_stomach_"+ frame_index + ".jpg", frame)
-                                check_1 =True
-                        if small_bowel_flag and colon_flag == False:
-                            cls_display = "first_small_bowel"
-                            if check_2 == False:
-                                cv2.imwrite("./test/" + fname + "first_small_bowel_" + frame_index + ".jpg", frame)
-                                check_2 = True
-                        if colon_flag:
-                            cls_display = "first_colon"
-                            if check_3 == False:
-                                cv2.imwrite("./test/" + fname + "first_colon" + frame_index + ".jpg", frame)
-                                check_3 = True
-                    check = False
-                    inputs_images.clear()
+                if stomach_flag and small_bowel_flag == False and colon_flag == False:
+                    cls_display = "first_stomach"
+                    if check_1 == False: #경계 영상 이미지 저장
+                        cv2.imwrite("./test_one/" + fname + cls_display + str(frame_index) + ".jpg", frame)
+                        check_1 = True
+
+                if small_bowel_flag and colon_flag == False:
+                    cls_display = "first_small_bowel"
+                    if check_2 == False: #경계 영상 이미지 저장
+                        pred_count = [pred_count[0], pred_count[1], 0]  # 소장 전에 예측한 대장 이미지 count 초기화
+                        cv2.imwrite("./test_one/" + fname + cls_display +  str(frame_index) + ".jpg", frame)
+                        check_2 = True
+
+                if colon_flag:
+                    cls_display = "first_colon"
+                    if check_3 == False: #경계 영상 이미지 저장
+                        cv2.imwrite("./test_one/" + fname + cls_display+  str(frame_index) + ".jpg", frame)
+                        check_3 = True
 
                 cv2.putText(frame, cls_display, (150, 60), cv2.FONT_HERSHEY_DUPLEX, 1, (0, 255, 255))
-                #cv2.imshow("test", frame)
+                cv2.imshow("test", frame)
                 out.write(frame)
 
                 # ESC를 누르면 종료
                 key = cv2.waitKey(1) & 0xFF
                 if (key == 27):
                     break
-
 
             stomach_flag = False
             small_bowel_flag = False

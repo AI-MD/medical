@@ -69,7 +69,7 @@ class CRNN(BaseModel):
         self.linear_out = nn.Linear(LSTM_UNITS * 2, num_classes)
         self.device = device
 
-    def forward(self, x_3d):
+    def forward(self, x_3d, init_states = None):
 
         cnn_embed_seq = []
         for t in range(x_3d.size(1)):
@@ -81,11 +81,16 @@ class CRNN(BaseModel):
             cnn_embed_seq.append(feature)
         cnn_embed_seq = torch.stack(cnn_embed_seq, dim=0).transpose_(0, 1)
 
-        h0 = torch.zeros(2 * self.num_layer, cnn_embed_seq.size(0), self.hidden_size).to(self.device)  # (BATCH SIZE, SEQ_LENGTH, HIDDEN_SIZE)
-        c0 = torch.zeros(2 * self.num_layer, cnn_embed_seq.size(0), self.hidden_size).to(self.device)   # hidden state와 동일
+        if init_states is None:
+            h_0, c_0 = (
+                torch.zeros(2 * self.num_layer, cnn_embed_seq.size(0), self.hidden_size).to(self.device),  # (BATCH SIZE, SEQ_LENGTH, HIDDEN_SIZE)
+                torch.zeros(2 * self.num_layer, cnn_embed_seq.size(0), self.hidden_size).to(self.device)  # hidden state와 동일
+            )
+        else:
+            h_0, c_0 = init_states
 
         self.lstm1.flatten_parameters()
-        h_lstm1, (h1, c1) = self.lstm1(cnn_embed_seq, (h0, c0))
+        h_lstm1, (h1, c1) = self.lstm1(cnn_embed_seq, (h_0, c_0))
         self.lstm2.flatten_parameters()
         h_lstm2, _ = self.lstm2(h_lstm1, (h1, c1))
 

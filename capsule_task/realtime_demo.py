@@ -51,8 +51,6 @@ def main(config):
     colon_flag = False
 
 
-
-
     # image 대신 비디오로 변경하면 됨.
 
     for root, _, fnames in sorted(os.walk(config['image_path'], followlinks=True)):
@@ -74,10 +72,11 @@ def main(config):
             if check:
                 inputs_torch_images = torch.stack(inputs_images, dim=0)
                 inputs_torch_images = inputs_torch_images.unsqueeze(0).to(device)
-
+                print(len(inputs_torch_images))
                 output = CRNN_model(inputs_torch_images)
 
                 outputs = torch.softmax(output, dim=2)
+                #print(outputs)
 
                 _, _array_idx, _predict_idx = torch.where(outputs > config['cls_threshold']) # how to measure threshold
 
@@ -97,13 +96,10 @@ def main(config):
 
                     if pred_list.count(0) > config['first_stomach']:
                         stomach_flag = True
-
                     if pred_list.count(1) > config['first_small_bowel'] and stomach_flag:
                         small_bowel_flag = True
-
                     if pred_list.count(2) > config['first_colon'] and stomach_flag and small_bowel_flag:
                         colon_flag = True
-
                     if stomach_flag and small_bowel_flag == False and colon_flag == False:
                         print("위 시작")
                     if small_bowel_flag and colon_flag == False:
