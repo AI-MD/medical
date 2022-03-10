@@ -95,6 +95,10 @@ def main(config):
             while True:
                 retval, frame = cap.read()
                 frame_index = int(frame_index) + 1
+
+                if frame_index < config['clip_num']:
+                    pred_count = [0, 0, 0]
+
                 if not (retval):  # 프레임정보를 정상적으로 읽지 못하면
                     break  # while문을 빠져나가기
 
@@ -109,6 +113,7 @@ def main(config):
                 _, _array_idx, _predict_idx = torch.where(outputs > config['cls_threshold'])
 
                 pred_index = _predict_idx.cpu().numpy()
+
 
                 if len(pred_index) > 0 : #해당 인덱스 count
                     if stomach_flag ==False and int(pred_index[0]) == 0:
