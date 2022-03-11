@@ -50,7 +50,7 @@ def main(config):
 
     # image 대신 비디오로 변경하면 됨.
     fcc = cv2.VideoWriter_fourcc('D', 'I', 'V', 'X')  # DIVX 코덱 적용
-
+    savePath = "./test_0311/"
     for root, _, fnames in sorted(os.walk(config['video_path'], followlinks=True)):
         path_list = sorted(fnames)
 
@@ -62,7 +62,7 @@ def main(config):
             check_3 = False
 
             cap = cv2.VideoCapture(path)
-            fps = cap.get(cv2.CAP_PROP_FPS);
+            fps = cap.get(cv2.CAP_PROP_FPS)
             frameWidth = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))  # 영상의 넓이(가로) 프레임
             frameHeight = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))  # 영상의 높이(세로) 프레임
 
@@ -82,7 +82,8 @@ def main(config):
 
                 if frame_index % config['clip_num'] == 0:
                     pred_count = [0, 0, 0]
-   
+
+                
                 if not (retval):  # 프레임정보를 정상적으로 읽지 못하면
                     break  # while문을 빠져나가기
 
@@ -116,20 +117,20 @@ def main(config):
                 if stomach_flag and small_bowel_flag == False and colon_flag == False:
                     cls_display = "first_stomach"
                     if check_1 == False: #경계 영상 이미지 저장
-                        cv2.imwrite("./test_one/" + fname + cls_display + str(frame_index) + ".jpg", frame)
+                        cv2.imwrite(savePath + fname + cls_display + str(frame_index) + ".jpg", frame)
                         check_1 = True
 
                 if small_bowel_flag and colon_flag == False:
                     cls_display = "first_small_bowel"
                     if check_2 == False: #경계 영상 이미지 저장
                         pred_count = [pred_count[0], pred_count[1], 0]  # 소장 전에 예측한 대장 이미지 count 초기화
-                        cv2.imwrite("./test_one/" + fname + cls_display +  str(frame_index) + ".jpg", frame)
+                        cv2.imwrite(savePath + fname + cls_display +  str(frame_index) + ".jpg", frame)
                         check_2 = True
 
                 if colon_flag:
                     cls_display = "first_colon"
                     if check_3 == False: #경계 영상 이미지 저장
-                        cv2.imwrite("./test_one/" + fname + cls_display+  str(frame_index) + ".jpg", frame)
+                        cv2.imwrite(savePath + fname + cls_display+  str(frame_index) + ".jpg", frame)
                         check_3 = True
 
                 cv2.putText(frame, cls_display, (150, 60), cv2.FONT_HERSHEY_DUPLEX, 1, (0, 255, 255))
