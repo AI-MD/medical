@@ -1,0 +1,58 @@
+{
+    "name": "tf_efficientnet_b0_ns_sam_0407_softmax_dataset_512_3_video",
+
+    "n_gpu": 1,
+    "use_amp": false,
+    "backbone_resume" :"D:/capsule_data_2022/2022_new_model_path/backbone/model_best.pth",
+    "test_resume": "D:\\capsule_project\\medical-image\\capsule_task\\saved\\models\\tf_efficientnet_b0_ns_sam_0407_softmax_dataset_512_3_video\\0407_150000\\model_best.pth",
+
+    "image_path": "D:/capsule_data_2022/kangwon_pillcam_train_2022/test/case30/",
+    "video_path": "D:\\capsule_data_2022\\video_valid\\",
+    "label_info":"D:\\capsule_project\\medical-image\\capsule_task\\valid_frame_info.csv",
+    "clip_num" : 256,
+    "ma_flag" : false,
+    "ma_clip" :64,
+    "first_stomach": 128,
+    "first_small_bowel" :196,
+    "first_colon": 196,
+
+    "crnn_arch": {
+        "type": "CRNN",
+        "args": {
+            "model": "tf_efficientnet_b0_ns",
+            "embed_size": 1280,
+            "LSTM_UNITS": 64,
+            "num_layer": 2,
+            "num_classes": 3,
+            "pretrained" :  true
+        }
+    },
+
+    "loss": "CrossEntropyLoss",
+    "loss_": "bce_loss",
+    "loss_CB": "CB_loss",
+
+    "metrics": [
+        "accuracy"
+    ],
+
+    "lr_scheduler": {
+        "type": "StepLR",
+        "args": {
+            "step_size": 50,
+            "gamma": 0.1
+        }
+    },
+    "trainer": {
+        "epochs": 20,
+
+        "save_dir": "saved/",
+        "save_period": 1,
+        "verbosity": 2,
+
+        "monitor": "min val_loss",
+        "early_stop": -1,
+
+        "tensorboard": false
+    }
+}
