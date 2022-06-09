@@ -15,7 +15,11 @@
     "first_stomach": 128,
     "first_small_bowel" :196,
     "first_colon": 196,
-
+    "threshold": 0.5,
+    "num_layer": 5,
+    "embed_size": 1280,
+    "hidden_size": 64,
+    
     "crnn_arch": {
         "type": "CRNN",
         "args": {
