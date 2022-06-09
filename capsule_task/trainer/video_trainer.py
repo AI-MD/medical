@@ -18,6 +18,7 @@ class VideoTrainer(BaseTrainer):
         self.device = device
         self.use_amp = use_amp
         self.data_loader = data_loader
+
         if len_epoch is None:
             # epoch-based training
             self.len_epoch = len(self.data_loader)
@@ -53,13 +54,12 @@ class VideoTrainer(BaseTrainer):
             self.optimizer.zero_grad()
             with torch.cuda.amp.autocast(enabled=self.use_amp):
 
-                output = self.model(data)
+                output, _ = self.model(data)
 
                 # reshape output and target for cross entropy loss
                 output = output.reshape(output.size(0) * output.size(1), -1)  # (batch * seq_len x classes)
                 target = target.reshape(-1)  # (batch * seq_len), class index
-            
-
+                
                 loss = self.criterion(output, target)
 
             if not torch.isfinite(loss):
@@ -114,10 +114,7 @@ class VideoTrainer(BaseTrainer):
             for batch_idx, (data, target, paths) in enumerate(self.valid_data_loader):
                 data, target = data.to(self.device), target.to(self.device)
 
-
-
-
-                output = self.model(data)
+                output, _ = self.model(data)
 
                 # reshape output and target for cross entropy loss
                 output = output.reshape(output.size(0) * output.size(1), -1)  # (batch * seq_len x classes)

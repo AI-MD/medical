@@ -53,20 +53,17 @@ class CRNN(BaseModel):
     def __init__(self, model, embed_size, LSTM_UNITS, num_layer ,num_classes, pretrained, device):
         super(CRNN, self).__init__()
 
-        if pretrained:
-            self.model = timm.create_model(model, pretrained, num_classes = num_classes)
-        else:
-            self.model = timm.create_model(model, pretrained, num_classes = num_classes)
+    
+        self.model = timm.create_model(model, pretrained, num_classes = num_classes)
 
         self.avgpool = torch.nn.AdaptiveAvgPool2d(1)
         self.hidden_size = LSTM_UNITS
         self.num_layer = num_layer
-        self.lstm1 = nn.LSTM(embed_size, LSTM_UNITS, num_layer, bidirectional=True, batch_first=True)
-        self.lstm2 = nn.LSTM(LSTM_UNITS * 2, LSTM_UNITS, num_layer, bidirectional=True, batch_first=True)
+        self.lstm1 = nn.LSTM(embed_size, LSTM_UNITS, num_layer, bidirectional=False, batch_first=True)
 
-        self.linear= nn.Linear(LSTM_UNITS * 2, LSTM_UNITS * 2)
+        self.linear= nn.Linear(LSTM_UNITS , LSTM_UNITS )
 
-        self.linear_out = nn.Linear(LSTM_UNITS * 2, num_classes)
+        self.linear_out = nn.Linear(LSTM_UNITS, num_classes)
         self.device = device
 
     def forward(self, x_3d, init_states = None, training_flag = False):
@@ -83,24 +80,19 @@ class CRNN(BaseModel):
 
         if init_states is None:
             h_0, c_0 = (
-                torch.zeros(2 * self.num_layer, cnn_embed_seq.size(0), self.hidden_size).to(self.device),  # (BATCH SIZE, SEQ_LENGTH, HIDDEN_SIZE)
-                torch.zeros(2 * self.num_layer, cnn_embed_seq.size(0), self.hidden_size).to(self.device)  # hidden state와 동일
+                torch.zeros(self.num_layer, cnn_embed_seq.size(0), self.hidden_size).to(self.device),  # (BATCH SIZE, SEQ_LENGTH, HIDDEN_SIZE)
+                torch.zeros(self.num_layer, cnn_embed_seq.size(0), self.hidden_size).to(self.device)  # hidden state와 동일
             )
         else:
             h_0, c_0 = init_states
 
         self.lstm1.flatten_parameters()
 
-        if training_flag:
-            h_lstm1, (h1, c1) = self.lstm1(cnn_embed_seq, (h_0, c_0))
-        else:
-            h_lstm1, (h1, c1) = self.lstm1(cnn_embed_seq)
-
-        self.lstm2.flatten_parameters()
-        h_lstm2, _ = self.lstm2(h_lstm1, (h1, c1))
-
-        hidden_result = F.relu(self.linear(h_lstm2))
+      
+        h_lstm1, (h1, c1) = self.lstm1(cnn_embed_seq, (h_0, c_0))
+     
+        hidden_result = F.relu(self.linear(h_lstm1))
 
         output = self.linear_out(hidden_result)
 
-        return output
+        return output, (h1, c1)

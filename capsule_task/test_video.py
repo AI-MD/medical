@@ -14,6 +14,11 @@ from tqdm import tqdm
 from sklearn.metrics import confusion_matrix
 
 from sklearn.metrics import f1_score , precision_score,recall_score,roc_auc_score
+import pathlib
+
+temp = pathlib.PosixPath
+pathlib.PosixPath = pathlib.WindowsPath
+
 
 # fix random seeds for reproducibility
 SEED = 123
@@ -54,6 +59,7 @@ def main(config):
     logger.info('Loading checkpoint: {} ...'.format(config['test_resume']))
     checkpoint = torch.load(config['test_resume'])
     state_dict = checkpoint['state_dict']
+   
 
     CRNN_model.load_state_dict(state_dict,strict=False)
 
@@ -81,7 +87,7 @@ def main(config):
     for i, (data, target, paths) in enumerate(tqdm(data_loader)):
         data, target = data.to(device), target.to(device)
 
-        output = CRNN_model(data)
+        output, _ = CRNN_model(data)
 
         # reshape output and target for cross entropy loss
         output = output.reshape(output.size(0) * output.size(1), -1)  # (batch * seq_len x classes)
@@ -99,7 +105,7 @@ def main(config):
         total_loss += loss.item() * batch_size
         for i, metric in enumerate(metric_fns):
             total_metrics[i] += metric(output, target) * batch_size
-            print(total_metrics[i])
+            #print(total_metrics[i])
 
 
     log = {'loss': total_loss / n_samples}

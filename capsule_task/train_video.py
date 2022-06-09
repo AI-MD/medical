@@ -19,6 +19,10 @@ torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
 np.random.seed(SEED)
 
+import pathlib
+
+temp = pathlib.PosixPath
+pathlib.PosixPath = pathlib.WindowsPath
 
 def main(config):
     logger = config.get_logger('train')
@@ -32,6 +36,7 @@ def main(config):
     CRNN_model = config.init_obj('crnn_arch', module_arch, device = device)
 
     logger.info('Loading checkpoint: {} ...'.format(config['backbone_resume']))
+    
     checkpoint = torch.load(config['backbone_resume'])
     state_dict = checkpoint['state_dict']
 

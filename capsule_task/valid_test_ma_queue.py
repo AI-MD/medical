@@ -83,29 +83,19 @@ def main(config):
     wr = csv.writer(f)
     wr.writerow(['filename',"first_stomach", "first_small_bowel" , "first_colon" ])
     
-    savePath = "./0523_queue_valid/"
+    savePath = "./0603_queue_valid/"
 
     
-    # label_list = {"D2010":[653,	8361,	57816],
-    #         "D2021": [592,	10460,	65405],
-    #             "KNUH6060":[160,	2573,	69535],
-    #             "KNUH6075":[160,	5949,	86669],
-    #         "case26": [407,	5022,	100220],
-    #             "case28":[64,	13985,	67035],
-    #             "case29":[210,	3609,	47700],
-    #             "case30":[1,	8870,	45249],
-    #             "duh1":[400,	5745,	50375],
-    #         "duh2": [137,	3110,	94200]
-    #         }
-    savePath = "./test_0523/"
-
+    savePath = "./test_0603/"
+    
+  
     with torch.no_grad():
         for root, _, fnames in sorted(os.walk(config['video_path'], followlinks=True)):
             path_list = sorted(fnames)
           
             for num, fname in enumerate(path_list):
                 path = os.path.join(root, fname)
-                print(path)
+                
                 check_1 = False
                 check_2 = False
                 check_3 = False
@@ -114,13 +104,8 @@ def main(config):
                 small_bowel_flag = False
                 colon_flag = False
 
-                # filename = "./valid_mean_results_0517/"+fname.split('.')[0] + "_result.csv"
 
-                # f = open(filename, 'w', newline='')
-                # wr_raw = csv.writer(f)
-                # wr_raw.writerow(['frame_index','predtict', 'prob', 'label' ])
-
-                filename_new = "./valid_mean_results_0517/"+fname.split('.')[0] + "_resultforMean.csv"
+                filename_new = "./valid_mean_results_0603/"+fname.split('.')[0] + "_resultforMean.csv"
 
                 f_n = open(filename_new, 'w', newline='')
                 wr_n = csv.writer(f_n)
@@ -147,23 +132,16 @@ def main(config):
                 filename = fname.split(".")[0]
                 result_frame.append(filename)
                 
-                #case_label =label_list.get(fname.split('.')[0])
-                
+                hidden_state = (
+                    torch.zeros(5, 1280, 64).to(device),  # (BATCH SIZE, SEQ_LENGTH, HIDDEN_SIZE)
+                    torch.zeros(5, 1280, 64).to(device)  # hidden state와 동일
+                )
+              
                 while True:
                     retval, frame = cap.read()
                     frame_index = int(frame_index) + 1
 
-                    # y_label = 0
                     
-                    # if frame_index < case_label[0]:
-                    #     y_label = -1
-                    # elif frame_index >= case_label[0] and frame_index < case_label[1]:
-                    #     y_label = 0    
-                    # elif frame_index >= case_label[1] and frame_index < case_label[2]:
-                    #     y_label = 1
-                    # else:
-                    #     y_label = 2
-
                     if not (retval):  # 프레임정보를 정상적으로 읽지 못하면
                         break  # while문을 빠져나가기
 
@@ -171,7 +149,7 @@ def main(config):
                     inputs = preprocess(pil_src).unsqueeze(0)
 
                     inputs_torch = inputs.unsqueeze(0).to(device)
-                    output = CRNN_model(inputs_torch)
+                    output, hidden_state = CRNN_model(inputs_torch, hidden_state)
                     outputs = torch.softmax(output, dim=2)
                     
                     output = outputs.reshape(outputs.size(0) * outputs.size(1), -1)  # (batch * seq_len x classes)
@@ -190,19 +168,13 @@ def main(config):
 
                         pred_idx = np.argmax(pred_mean_array)
                         
-                        # wr_list = []
-                        # wr_list.append(frame_index)
-                        # wr_list.append(pred_idx)
-                        # wr_list.append(np.max(pred_mean_array))
-                        # wr_list.append(y_label)
-                        # wr_raw.writerow(wr_list)
-                        
+                    
                         wr_mean = []
                         wr_mean.append(frame_index)
                         wr_mean.append(pred_mean_array[0])
                         wr_mean.append(pred_mean_array[1])
                         wr_mean.append(pred_mean_array[2])
-                        #wr_mean.append(y_label) 
+                      
                         wr_n.writerow(wr_mean)
                         
                         if np.max(pred_mean_array) < 0.5:
@@ -224,7 +196,7 @@ def main(config):
                             if check_1 == False: #경계 영상 이미지 저장
                                 cv2.imwrite(savePath + filename +"_"+ cls_display+"_"+ str(frame_index) + ".jpg", frame)
                                 print(fname, cls_display, frame_index)
-                                result_frame.append(frame_index)
+                                result_frame.append(frame_index) 
                                 check_1 = True
 
                         if small_bowel_flag and colon_flag == False:
