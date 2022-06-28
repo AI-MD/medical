@@ -21,11 +21,11 @@ import sklearn.metrics as metrics
 import scipy
 
 from scipy.ndimage.filters import uniform_filter1d
+from scipy.ndimage import gaussian_filter1d
 
 temp = pathlib.PosixPath
 pathlib.PosixPath = pathlib.WindowsPath
 
-N = 128
 
 def halfgaussian_kernel1d(sigma, radius):
     """
@@ -79,6 +79,45 @@ def getLabelMap(config):
     labeltmap= csv.DictReader(e)
     return labeltmap
 
+def check_flag(output_filtered_array, stomach_flag, small_bowel_flag, colon_flag ):
+    if np.max(output_filtered_array) == 0:
+        stomach_flag = True
+    if np.max(output_filtered_array) == 1 and stomach_flag:
+        small_bowel_flag = True
+    if np.max(output_filtered_array) == 2  and stomach_flag and small_bowel_flag:
+        colon_flag = True
+
+    return stomach_flag, small_bowel_flag, colon_flag
+
+def image_save(output_filtered_array, stomach_flag, small_bowel_flag, colon_flag, pred_label, check_1, check_2, check_3, savePath, fname, frame_index , frame, result_frame ):
+    if stomach_flag and small_bowel_flag == False and colon_flag == False:
+        cls_display = pred_label[np.max(output_filtered_array)]
+        if check_1 == False: #경계 영상 이미지 저장
+            cv2.imwrite(savePath + fname + cls_display + str(frame_index) + ".jpg", frame)
+            print(fname, cls_display, frame_index)
+            result_frame.append(frame_index)
+            check_1 = True
+
+    if small_bowel_flag and colon_flag == False:
+        cls_display = pred_label[np.max(output_filtered_array)]
+        if check_2 == False: #경계 영상 이미지 저장
+            cv2.imwrite(savePath + fname + cls_display +  str(frame_index) + ".jpg", frame)
+            print( fname,cls_display, frame_index)
+            result_frame.append(frame_index)
+            check_2 = True
+
+    if colon_flag:
+        cls_display = pred_label[np.max(output_filtered_array) ]
+        if check_3 == False: #경계 영상 이미지 저장
+            cv2.imwrite(savePath + fname + cls_display+  str(frame_index) + ".jpg", frame)
+            print( fname,cls_display, frame_index)
+            result_frame.append(frame_index)
+            check_3 = True
+            
+    return check_1, check_2, check_3
+
+
+
 def main(config):
     logger = config.get_logger('test')
 
@@ -115,9 +154,10 @@ def main(config):
     
    
     
-    savePath = "./test_0622/"
+    savePath = "./test_0628/"
     
-  
+    N =  config['gaussian_size']
+
     with torch.no_grad():
         for root, _, fnames in sorted(os.walk(config['video_path'], followlinks=True)):
             path_list = sorted(fnames)
@@ -181,7 +221,6 @@ def main(config):
                     if not (retval):  # 프레임정보를 정상적으로 읽지 못하면
                         break  # while문을 빠져나가기
                     
-
                     if len(inputs_images) < config['clip_num'] and frame_index % 5 == 0:
                         frame_index = format(int(frame_index), '06')
 
@@ -214,75 +253,51 @@ def main(config):
                         pred_score = output.cpu().numpy()
                        
                         pred_prob.extend(pred_score)
+                        
+                        if len(pred_prob) < N *4:
+                            pred_idx_array = np.argmax(pred_prob, 1)
+                            output_array = pred_idx_array[-(config['clip_num']+1):-1]
+                            stomach_flag, small_bowel_flag, colon_flag =  check_flag(output_array, stomach_flag, small_bowel_flag, colon_flag )
+                            check_1, check_2, check_3 = image_save(output_array, stomach_flag, small_bowel_flag, colon_flag, pred_label, check_1, check_2, check_3, savePath, fname, frame_index , frame, result_frame )
+
+                            check = False
+                            inputs_images.clear()
+                            continue
+
                        
-                        # if len(pred_prob) < config['clip_num']:
-                        #     check = False
-                        #     inputs_images.clear()
-                        #     continue
-                        if len(pred_prob) <= config['gaussian_size'] * 16:
-                            N = config['clip_num']
-                        else:
-                            N = config['gaussian_size']
                         
                         pred_prob_array = np.array(pred_prob)
                         
                         pred_prob_gas =  np.zeros(pred_prob_array.shape)
                         
-                        
+                        print("test", len(pred_prob), N )
+                       
                         for idx, x in enumerate(pred_prob_array.T):
                             pred_prob_gas[:, idx]= halfgaussian_filter1d(x, N)
 
                         pred_idx_array_gas = np.argmax(pred_prob_gas, 1)
+                        output_filtered_array = pred_idx_array_gas[-(config['clip_num']+1):-1]
+
+                        ## 예외처리  
+                        if len(output_filtered_array) == 0:
+                            check = False
+                            inputs_images.clear()
+                            continue
                         
-
-                        if len(pred_prob) < config['gaussian_size'] * 16:
-                            del pred_prob[0:int(config['clip_num']/2)]
-                        else:
-                            del pred_prob[0:config['gaussian_size']]
+                        stomach_flag, small_bowel_flag, colon_flag =  check_flag(output_filtered_array, stomach_flag, small_bowel_flag, colon_flag )
+                      
+                        check_1, check_2, check_3 = image_save(output_filtered_array, stomach_flag, small_bowel_flag, colon_flag, pred_label, check_1, check_2, check_3, savePath, fname, frame_index , frame, result_frame )
                         
-                        print("test N size ", N, "list size : ", len(pred_prob))
-                        print(pred_idx_array_gas[-(config['clip_num']+1):-1])
-
-                        
-                        if np.max(pred_idx_array_gas[-(config['clip_num']+1):-1]) == 0:
-                            stomach_flag = True
-                        if np.max(pred_idx_array_gas[-(config['clip_num']+1):-1]) == 1 and stomach_flag:
-                            small_bowel_flag = True
-                        if np.max(pred_idx_array_gas[-(config['clip_num']+1):-1]) == 2  and stomach_flag and small_bowel_flag:
-                            colon_flag = True
-                    
-
-                        if stomach_flag and small_bowel_flag == False and colon_flag == False:
-                            cls_display = pred_label[np.max(pred_idx_array_gas[-(config['clip_num']+1):-1])]
-                            if check_1 == False: #경계 영상 이미지 저장
-                                cv2.imwrite(savePath + fname + cls_display + str(frame_index) + ".jpg", frame)
-                                print(fname, cls_display, frame_index)
-                                result_frame.append(frame_index)
-                                check_1 = True
-
-                        if small_bowel_flag and colon_flag == False:
-                            cls_display = pred_label[ np.max(pred_idx_array_gas[-(config['clip_num']+1):-1])]
-                            if check_2 == False: #경계 영상 이미지 저장
-                                pred_count = [pred_count[0], pred_count[1], 0]  # 소장 전에 예측한 대장 이미지 count 초기화
-                                cv2.imwrite(savePath + fname + cls_display +  str(frame_index) + ".jpg", frame)
-                                print( fname,cls_display, frame_index)
-                                result_frame.append(frame_index)
-                                check_2 = True
-
-                        if colon_flag:
-                            cls_display = pred_label[np.max(pred_idx_array_gas[-(config['clip_num']+1):-1]) ]
-                            if check_3 == False: #경계 영상 이미지 저장
-                                cv2.imwrite(savePath + fname + cls_display+  str(frame_index) + ".jpg", frame)
-                                print( fname,cls_display, frame_index)
-                                result_frame.append(frame_index)
-                                check_3 = True
-                                break
+                        if check_3:
+                            break
+                       
 
                         check = False
                         inputs_images.clear()
 
 
-                
+                        del pred_prob[0:config["clip_num"]]
+
                     # ESC를 누르면 종료
                     key = cv2.waitKey(1) & 0xFF
                     if (key == 27):
