@@ -65,7 +65,7 @@ def cls_noisy_inference(config, logger, cls_preds):
 
                     shutil.copy(path, dest_image_path)
                 
-                else:
+                 else:
                     dir_name , file_name = os.path.split(path)
                     sub_dir_name , sub_root_name = os.path.split(dir_name)
                     base_name = os.path.basename(sub_dir_name)

@@ -40,7 +40,7 @@ class capsule_Video_duk(VisionDataset):
         if self.train:
             root = os.path.join(root, "train")
         else:
-            root = os.path.join(root, "test")
+            root = os.path.join(root, "valid")
 
         directorys = os.listdir(root)
 
@@ -127,7 +127,7 @@ class capsule_Video(VisionDataset):
         if self.train:
             root = os.path.join(root, "train")
         else:
-            root = os.path.join(root, "test")
+            root = os.path.join(root, "valid")
 
         directorys = os.listdir(root)
 

@@ -75,21 +75,14 @@ def main(config):
 
     label_map = getLabelMap(config)
     
-
-
-    label_list = {"D2010":[653,	8361,	57816],
-                "D2021": [592,	10460,	65405],
-                 "KNUH6060":[160,	2573,	69535],
-                 "KNUH6075":[160,	5949,	86669],
-                "case26": [407,	5022,	100220],
-                 "case28":[64,	13985,	67035],
-                 "case29":[210,	3609,	47700],
-                 "case30":[1,	8870,	45249],
-                 "duh1":[400,	5745,	50375],
-                "duh2": [137,	3110,	94200]
-                }
-
-
+    filename = config["result_file_name"]
+    
+    f = open(filename, 'w', newline='')
+    wr = csv.writer(f)
+    wr.writerow(['filename',"first_stomach", "first_small_bowel" , "first_colon" ])
+   
+    savePath = "./test_0516/"
+    
     with torch.no_grad():
         for root, _, fnames in sorted(os.walk(config['video_path'], followlinks=True)):
             path_list = sorted(fnames)
@@ -98,18 +91,26 @@ def main(config):
             for num, fname in enumerate(path_list):
                 path = os.path.join(root, fname)
                 
-                filename = "./valid_mean_result/"+fname.split('.')[0] + "_resultforRoc_0427.csv"
+                check_1 = False
+                check_2 = False
+                check_3 = False
 
-                f = open(filename, 'w', newline='')
-                wr = csv.writer(f)
-                wr.writerow(['frame_index','predtict' , 'label' ])
+                stomach_flag = False
+                small_bowel_flag = False
+                colon_flag = False
+
+                # filename = "./valid_mean_results_0509/"+fname.split('.')[0] + "_result.csv"
+
+                # f = open(filename, 'w', newline='')
+                # wr = csv.writer(f)
+                # wr.writerow(['frame_index','predtict' , 'label' ])
 
                 
-                filename_new = "./valid_mean_result/"+fname.split('.')[0] + "_resultforCount_0427.csv"
+                # filename_new = "./valid_mean_results_0509/"+fname.split('.')[0] + "_resultforMean.csv"
 
-                f_n = open(filename_new, 'w', newline='')
-                wr_n = csv.writer(f_n)
-                wr_n.writerow(["index", "0_mean" , "1_mean" , "2_mean" , "label"])
+                # f_n = open(filename_new, 'w', newline='')
+                # wr_n = csv.writer(f_n)
+                # wr_n.writerow(["index", "0_mean" , "1_mean" , "2_mean" , "label"])
 
 
                 cap = cv2.VideoCapture(path)
@@ -119,8 +120,7 @@ def main(config):
 
                 frame_size = (frameWidth, frameHeight)
 
-                #out = cv2.VideoWriter(os.path.join("./", fname), fcc, fps, frame_size)
-               
+              
                 pred_count = [0, 0, 0]
                 pred_prob = []
                 pred_prob_list =[]
@@ -128,22 +128,16 @@ def main(config):
                 frame_index = 0
                 pred_prob =[]
                 
-                case_label =label_list.get(fname.split('.')[0])
-               
+                pred_label = ["stomach", "small_colon", "colon", "none"]
+                cls_display =""
+
+                result_frame = []
+                result_frame.append(fname)
+
                 while True:
                     retval, frame = cap.read()
                     frame_index = int(frame_index) + 1
-                    y_label = 0
-                    
-                    if frame_index < case_label[0]:
-                        continue
-                    elif frame_index >= case_label[0] and frame_index < case_label[1]:
-                       y_label = 0
-                    elif frame_index >= case_label[1] and frame_index < case_label[2]:
-                       y_label = 1
-                    else:
-                       y_label = 2
-
+                                       
                     if not (retval):  # 프레임정보를 정상적으로 읽지 못하면
                         break  # while문을 빠져나가기
 
@@ -157,21 +151,23 @@ def main(config):
                     output = outputs.reshape(outputs.size(0) * outputs.size(1), -1)  # (batch * seq_len x classes)
                     predicted = torch.argmax(output,dim = 1)
 
-                    wr_list = []
-                    wr_list.append(frame_index)
-                    wr_list.append(predicted.item())
-                    wr_list.append(y_label)
-                    wr.writerow(wr_list)
+                    # wr_list = []
+                    # wr_list.append(frame_index)
+                    # wr_list.append(predicted.item())
+                    # wr_list.append(y_label)
+                    # wr.writerow(wr_list)
+
                     pred_score = output.cpu().numpy().squeeze()
+
                     pred_prob.append(pred_score)
                     
-                    
+                   
                     if len(pred_prob) == config['clip_num']:
        
                         pred_prob_array = np.array(pred_prob)
                       
                         print("--------------------------------")
-                        print("count")
+                        #print("count")
                       
                         pred_idx_array = np.argmax(pred_prob_array, 1).tolist()
 
@@ -200,36 +196,80 @@ def main(config):
                                 pred_idx_array = np.argmax(pred_prob_ma,1).tolist()
                         
                         pred_mean_array = np.mean(pred_prob_array, axis = 0)       
-                                
+                       
+                        #print(pred_mean_array)
+                       
+                        # if np.max(pred_mean_array) < 0.5:
+                        #     print(np.max(pred_mean_array))
+                        #     pred_prob_list = pred_prob[len(pred_prob)-config['ma_clip']+1:]
+                        #     pred_prob.clear()
+                        #     continue        
+                            
                         # print("0 count : ",pred_idx_array.count(0))
                         # print("1 count : ",pred_idx_array.count(1))
                         # print("2 count : ",pred_idx_array.count(2))
 
-                        result_list = []
-                        result_list.append(frame_index)
-                        result_list.append(pred_mean_array[0])
-                        result_list.append(pred_mean_array[1])
-                        result_list.append(pred_mean_array[2])
-                        result_list.append(y_label)
-                        wr_n.writerow(result_list)
+                        # result_list = []
+                        # result_list.append(frame_index)
+                        # result_list.append(pred_mean_array[0])
+                        # result_list.append(pred_mean_array[1])
+                        # result_list.append(pred_mean_array[2])
+                        # result_list.append(y_label)
+                        # wr_n.writerow(result_list)
                         
                         print("--------------------------------")
-                       
                         
+                        pred_idx = np.argmax(pred_mean_array)
+                        
+                        
+                        if pred_idx ==0:
+                            stomach_flag = True
+                        if pred_idx == 1 and stomach_flag:
+                            small_bowel_flag = True
+                        if pred_idx == 2  and stomach_flag and small_bowel_flag:
+                            colon_flag = True
+                    
+
+                        if stomach_flag and small_bowel_flag == False and colon_flag == False:
+                            cls_display = pred_label[pred_idx]
+                            if check_1 == False: #경계 영상 이미지 저장
+                                cv2.imwrite(savePath + fname + cls_display + str(frame_index) + ".jpg", frame)
+                                print(fname, cls_display, frame_index)
+                                result_frame.append(frame_index)
+                                check_1 = True
+
+                        if small_bowel_flag and colon_flag == False:
+                            cls_display = pred_label[pred_idx]
+                            if check_2 == False: #경계 영상 이미지 저장
+                                pred_count = [pred_count[0], pred_count[1], 0]  # 소장 전에 예측한 대장 이미지 count 초기화
+                                cv2.imwrite(savePath + fname + cls_display +  str(frame_index) + ".jpg", frame)
+                                print( fname,cls_display, frame_index)
+                                result_frame.append(frame_index)
+                                check_2 = True
+
+                        if colon_flag:
+                            cls_display = pred_label[pred_idx]
+                            if check_3 == False: #경계 영상 이미지 저장
+                                cv2.imwrite(savePath + fname + cls_display+  str(frame_index) + ".jpg", frame)
+                                print( fname,cls_display, frame_index)
+                                result_frame.append(frame_index)
+                                check_3 = True
+
+
                         pred_prob_list = pred_prob[len(pred_prob)-config['ma_clip']+1:]
                         pred_prob.clear()
 
+                    cv2.putText(frame, cls_display, (150, 60), cv2.FONT_HERSHEY_DUPLEX, 1, (0, 255, 255))
+                    cv2.imshow("test", frame)
 
-                    
                     #out.write(frame)
 
                     # ESC를 누르면 종료
                     key = cv2.waitKey(1) & 0xFF
                     if (key == 27):
                         break
-
-                          
-        
+                wr.writerow(result_frame)
+                
                 stomach_flag = False
                 small_bowel_flag = False
                 colon_flag = False

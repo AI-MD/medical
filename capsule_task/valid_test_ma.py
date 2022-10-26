@@ -87,7 +87,7 @@ def main(config):
     fcc = cv2.VideoWriter_fourcc('D', 'I', 'V', 'X')  # DIVX 코덱 적용
     savePath = "./test_0419/"
     
-    filename = "result_valid_frame_0422.csv"
+    filename = config["result_file_name"]
     
     f = open(filename, 'w', newline='')
     wr = csv.writer(f)
@@ -131,9 +131,6 @@ def main(config):
                 while True:
                     retval, frame = cap.read()
                     frame_index = int(frame_index) + 1
-
-                    if frame_index % config['clip_num'] == 0:
-                        pred_count = [0, 0, 0]
 
                     if not (retval):  # 프레임정보를 정상적으로 읽지 못하면
                         break  # while문을 빠져나가기
@@ -204,7 +201,7 @@ def main(config):
                             cls_display = "first_stomach"
                             if check_1 == False: #경계 영상 이미지 저장
                                 #cv2.imwrite(savePath + fname + cls_display + str(frame_index) + ".jpg", frame)
-                                print( fname,cls_display, frame_index)
+                                print( fname, cls_display, frame_index)
                                 result_frame.append(frame_index)
                                 check_1 = True
 

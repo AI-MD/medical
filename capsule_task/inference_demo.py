@@ -62,8 +62,6 @@ def cls_inference(config, logger):
             #print("test", predicted.cpu().numpy())
             result_arr = np.unique(predicted.cpu().numpy(), return_counts=True)
 
-
-
             for res, pred, path, label in zip(outputs, predicted, path, target):
 
                 result_list = []

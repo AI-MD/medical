@@ -11,7 +11,7 @@ from PIL import Image
 from pathlib import Path
 
 from utils import prepare_device
-
+import csv
 
 def main(config):
     logger = config.get_logger('test')
@@ -52,67 +52,91 @@ def main(config):
 
 
     # image 대신 비디오로 변경하면 됨.
+    filename = "pillcam_test_kangwon_pillcam_test_0315_30.csv"
 
-    for root, _, fnames in sorted(os.walk(config['image_path'], followlinks=True)):
-        path_list = sorted(fnames)
+    f = open(filename, 'w', newline='')
+    wr = csv.writer(f)
+    wr.writerow(['case','index', 'predict' , 'prob', 'label' ])
+    with torch.no_grad():
+        
+        for root, _, fnames in sorted(os.walk(config['image_path'], followlinks=True)):
+            path_list = sorted(fnames)
 
-        print(os.path.basename(root))
-        pred_count = [0, 0, 0]
-        for num, fname in enumerate(path_list):
-            path = os.path.join(root, fname)
+            print(os.path.basename(root))
+            pred_count = [0, 0, 0]
+           
+            index = 0
+           
+            for num, fname in enumerate(path_list):
+                path = os.path.join(root, fname)
 
-            if len(inputs_images) < config['clip_num']:
-                image = Image.open(os.path.abspath(path)).convert('RGB')
-                inputs = preprocess(image)
-                inputs_images.append(inputs)
+                if len(inputs_images) < config['clip_num']:
+                    image = Image.open(os.path.abspath(path)).convert('RGB')
+                    inputs = preprocess(image)
+                    inputs_images.append(inputs)
 
-            if len(inputs_images) == config['clip_num'] or num == (len(path_list) - 1):
-                check = True
+                if len(inputs_images) == config['clip_num'] or num == (len(path_list) - 1):
+                    check = True
 
-            if check:
-                inputs_torch_images = torch.stack(inputs_images, dim=0)
-                inputs_torch_images = inputs_torch_images.unsqueeze(0).to(device)
-                print(len(inputs_torch_images))
-                output = CRNN_model(inputs_torch_images)
+                if check:
+                    inputs_torch_images = torch.stack(inputs_images, dim=0)
+                    inputs_torch_images = inputs_torch_images.unsqueeze(0).to(device)
+                
+                    output = CRNN_model(inputs_torch_images)
 
-                outputs = torch.softmax(output, dim=2)
-                #print(outputs)
+                    outputs = torch.softmax(output, dim=2)
+            
+                    output = outputs.reshape(outputs.size(0) * outputs.size(1), -1)  # (batch * seq_len x classes)
+                    predicted = torch.argmax(output,dim = 1)
 
-                _, _array_idx, _predict_idx = torch.where(outputs > config['cls_threshold']) # how to measure threshold
+        
+                    for  pred, prob in zip( predicted, output):
+                        
+                        result_list = []
+                        result_list.append(fname)
+                        result_list.append(index)
+                        result_list.append(pred.cpu().item())
+                        result_list.append((prob.cpu().numpy())[pred])
+                        result_list.append(int(os.path.basename(root))-1)
+                        wr.writerow(result_list)
+                        index = index + 1    
 
-                # pred = torch.argmax(outputs, dim=2)
+                    _, _array_idx, _predict_idx = torch.where(outputs > config['cls_threshold']) # how to measure threshold
 
-                pred_list = _predict_idx.cpu().numpy().tolist()
-                if len(pred_list) == 0:
-                    print(pred_label[3])
-                else:
-                    #print(pred_label[0] + "count ", pred_list.count(0))
-                    #print(pred_label[1] + "count ", pred_list.count(1))
-                    #print(pred_label[2] + "count ", pred_list.count(2))
+                    # pred = torch.argmax(outputs, dim=2)
 
-                    pred_count[0] += pred_list.count(0)
-                    pred_count[1] += pred_list.count(1)
-                    pred_count[2] += pred_list.count(2)
+                    pred_list = _predict_idx.cpu().numpy().tolist()
+                    if len(pred_list) == 0:
+                        print(pred_label[3])
+                    else:
+                        #print(pred_label[0] + "count ", pred_list.count(0))
+                        #print(pred_label[1] + "count ", pred_list.count(1))
+                        #print(pred_label[2] + "count ", pred_list.count(2))
 
-                    if pred_list.count(0) > config['first_stomach']:
-                        stomach_flag = True
-                    if pred_list.count(1) > config['first_small_bowel'] and stomach_flag:
-                        small_bowel_flag = True
-                    if pred_list.count(2) > config['first_colon'] and stomach_flag and small_bowel_flag:
-                        colon_flag = True
-                    if stomach_flag and small_bowel_flag == False and colon_flag == False:
-                        print("위 시작")
-                    if small_bowel_flag and colon_flag == False:
-                        print("소장 시작")
-                    if colon_flag:
-                        print("대장 시작")
+                        pred_count[0] += pred_list.count(0)
+                        pred_count[1] += pred_list.count(1)
+                        pred_count[2] += pred_list.count(2)
 
-                inputs_images.clear()
-                check = False
+                        if pred_list.count(0) > config['first_stomach']:
+                            stomach_flag = True
+                        if pred_list.count(1) > config['first_small_bowel'] and stomach_flag:
+                            small_bowel_flag = True
+                        if pred_list.count(2) > config['first_colon'] and stomach_flag and small_bowel_flag:
+                            colon_flag = True
+                        if stomach_flag and small_bowel_flag == False and colon_flag == False:
+                            print("위 시작")
+                        if small_bowel_flag and colon_flag == False:
+                            print("소장 시작")
+                        if colon_flag:
+                            print("대장 시작")
 
-        print(pred_count)
-        pred_count.clear()
-    print("complete")
+                    inputs_images.clear()
+                    check = False
+                
+
+            print(pred_count)
+            pred_count.clear()
+        print("complete")
 
 
 

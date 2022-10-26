@@ -11,7 +11,7 @@ class Model(BaseModel):
         super(Model, self).__init__()
         if pretrained:
             self.model = timm.create_model(model, pretrained=True, **kwargs)
-
+           
         else:
             self.model = timm.create_model(model, pretrained=False, **kwargs)
 
@@ -116,11 +116,12 @@ class CRNNB0(BaseModel):
 
     def forward(self, x_3d, init_states = None, training_flag = False):
        
-       
+
         x =torch.squeeze(x_3d)
         x = self.model.forward_features(x)
         x = self.avgpool(x)
-        features = x .view(x .size(0), -1)    
+        features = x .view(x .size(0), -1)  
+          
         features = torch.unsqueeze(features, 0) 
         
         if init_states is None:

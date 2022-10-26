@@ -25,7 +25,7 @@ np.random.seed(SEED)
 
 def main(config):
     logger = config.get_logger('train')
-
+    
     # setup data_loader instances
     data_loader = config.init_obj('data_loader', module_data)
     valid_data_loader = config.init_obj('valid_data_loader', module_data)

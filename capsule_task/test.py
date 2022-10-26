@@ -13,7 +13,9 @@ from sklearn.metrics import confusion_matrix
 
 from sklearn.metrics import f1_score , precision_score,recall_score,roc_auc_score
 
-
+import pathlib
+temp = pathlib.PosixPath
+pathlib.PosixPath = pathlib.WindowsPath
 
 
 def main(config):
@@ -104,7 +106,7 @@ def main(config):
 
     #tSNE_filename = os.path.join('./', 'TSNE.png')
     #tsne.visualize(feature,labels, tSNE_filename)
-
+    count = 0
 
     for i, (data, target, paths) in enumerate(tqdm(data_loader)):
         data, target = data.to(device), target.to(device)
@@ -116,8 +118,11 @@ def main(config):
         grad_images = []
 
         for img, path, label, pred in zip(data, paths, target, predicted):
-
+            
             if pred != label:
+                print(path)
+                count = count+1
+                print(count)
                 dir_name, file_name = os.path.split(path)
                 sub_dir_name, sub_root_name = os.path.split(dir_name)
                 img_path = os.path.join(sub_root_name, file_name)
@@ -176,7 +181,7 @@ def main(config):
 
         for i, metric in enumerate(metric_fns):
             total_metrics[i] += metric(output, target) * batch_size
-
+            #print(total_metrics[i])
         # preds = torch.argmax(output, dim=1)
         # for (pred, label) in zip(preds, target):
         #     if label.item() == 1:

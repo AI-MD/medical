@@ -49,14 +49,16 @@ class Trainer(BaseTrainer):
             #time_index = time_index.to(self.device)
 
 
-            inputs, targets_a, targets_b, lam = mixup_data(data, target,1, True)
+            inputs, targets_a, targets_b, lam = mixup_data(data, target, 1, True)
             
             
             #self.optimizer.zero_grad()
             with torch.cuda.amp.autocast(enabled=self.use_amp):
                 #output = self.model(data, time_index)
                 output = self.model(inputs)
-               
+                
+
+                
                 loss = mixup_criterion(self.criterion, output, targets_a, targets_b, lam)
                 #loss = self.criterion(output, target)
 
@@ -88,7 +90,7 @@ class Trainer(BaseTrainer):
                     epoch,
                     self._progress(batch_idx),
                     loss.item()))
-                self.writer.add_image('input', make_grid(data.cpu(), nrow=8, normalize=True))
+                #self.writer.add_image('input', make_grid(data.cpu(), nrow=8, normalize=True))
 
             if batch_idx == self.len_epoch:
                 break
@@ -125,7 +127,7 @@ class Trainer(BaseTrainer):
                 for met in self.metric_ftns:
                     #self.valid_metrics.update(met.__name__, met(output, target))
                     self.valid_metrics.update(met.__name__, met(output, targets_a, targets_b, lam))
-                self.writer.add_image('input', make_grid(data.cpu(), nrow=8, normalize=True))
+                #self.writer.add_image('input', make_grid(data.cpu(), nrow=8, normalize=True))
 
         # add histogram of model parameters to the tensorboard
         for name, p in self.model.named_parameters():

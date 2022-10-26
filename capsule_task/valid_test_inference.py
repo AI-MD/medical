@@ -91,30 +91,30 @@ def check_flag(output_filtered_array, stomach_flag, small_bowel_flag, colon_flag
 
 def image_save(output_filtered_array, stomach_flag, small_bowel_flag, colon_flag, pred_label, check_1, check_2, check_3, savePath, fname, frame_index , frame, result_frame ):
     if stomach_flag and small_bowel_flag == False and colon_flag == False:
-        cls_display = pred_label[np.max(output_filtered_array)]
+        
         if check_1 == False: #경계 영상 이미지 저장
-            cv2.imwrite(savePath + fname + cls_display + str(frame_index) + ".jpg", frame)
-            print(fname, cls_display, frame_index)
+            cv2.imwrite(savePath + fname + "stomach" + str(frame_index) + ".jpg", frame)  
+            print(fname, "stomach", frame_index)
             result_frame.append(frame_index)
             check_1 = True
 
-    if small_bowel_flag and colon_flag == False:
-        cls_display = pred_label[np.max(output_filtered_array)]
+    if small_bowel_flag and colon_flag == False and check_1:
+       
         if check_2 == False: #경계 영상 이미지 저장
-            cv2.imwrite(savePath + fname + cls_display +  str(frame_index) + ".jpg", frame)
-            print( fname,cls_display, frame_index)
+            cv2.imwrite(savePath + fname + "small_colon" +  str(frame_index) + ".jpg", frame)
+            print( fname,"small_colon" , frame_index)
             result_frame.append(frame_index)
             check_2 = True
 
-    if colon_flag:
-        cls_display = pred_label[np.max(output_filtered_array) ]
+    if colon_flag and check_2:
+        
         if check_3 == False: #경계 영상 이미지 저장
-            cv2.imwrite(savePath + fname + cls_display+  str(frame_index) + ".jpg", frame)
-            print( fname,cls_display, frame_index)
+            cv2.imwrite(savePath + fname + "colon" +  str(frame_index) + ".jpg", frame)
+            print( fname,"colon" , frame_index)
             result_frame.append(frame_index)
             check_3 = True
             
-    return check_1, check_2, check_3
+    return check_1, check_2, check_3, result_frame
 
 
 
@@ -154,7 +154,7 @@ def main(config):
     
    
     
-    savePath = "./test_0628/"
+    savePath = "./valid_0816_cnn/"
     
     N =  config['gaussian_size']
 
@@ -248,36 +248,50 @@ def main(config):
                         outputs = torch.softmax(output, dim=2)
 
                         output = outputs.reshape(outputs.size(0) * outputs.size(1), -1)  # (batch * seq_len x classes)
-                        predicted = torch.argmax(output,dim = 1)
-
+                        
                         pred_score = output.cpu().numpy()
                        
                         pred_prob.extend(pred_score)
                         
                         if len(pred_prob) < N *4:
                             pred_idx_array = np.argmax(pred_prob, 1)
+                            
                             output_array = pred_idx_array[-(config['clip_num']+1):-1]
-                            stomach_flag, small_bowel_flag, colon_flag =  check_flag(output_array, stomach_flag, small_bowel_flag, colon_flag )
-                            check_1, check_2, check_3 = image_save(output_array, stomach_flag, small_bowel_flag, colon_flag, pred_label, check_1, check_2, check_3, savePath, fname, frame_index , frame, result_frame )
+                           
 
+                            if len(output_array) > 0:
+
+                                stomach_flag, small_bowel_flag, colon_flag =  check_flag(output_array, stomach_flag, small_bowel_flag, colon_flag )
+                                
+                                if 0 in output_array:
+                                    stomach_flag =True
+                                
+                                if stomach_flag and small_bowel_flag == False:
+                                    check_1, check_2, check_3, result_frame = image_save(output_array, stomach_flag, small_bowel_flag, colon_flag, pred_label, check_1, check_2, check_3, savePath, fname, frame_index , frame, result_frame )
+                               
                             check = False
                             inputs_images.clear()
+                            small_bowel_flag = False
+                            colon_flag = False
+
                             continue
 
                        
-                        
                         pred_prob_array = np.array(pred_prob)
                         
                         pred_prob_gas =  np.zeros(pred_prob_array.shape)
                         
-                        print("test", len(pred_prob), N )
+                       
                        
                         for idx, x in enumerate(pred_prob_array.T):
-                            pred_prob_gas[:, idx]= halfgaussian_filter1d(x, N)
-
+                            pred_prob_gas[:, idx]= gaussian_filter1d(x, N)
+                        
+                       
+                        
                         pred_idx_array_gas = np.argmax(pred_prob_gas, 1)
+                       
                         output_filtered_array = pred_idx_array_gas[-(config['clip_num']+1):-1]
-
+                        
                         ## 예외처리  
                         if len(output_filtered_array) == 0:
                             check = False
@@ -285,13 +299,14 @@ def main(config):
                             continue
                         
                         stomach_flag, small_bowel_flag, colon_flag =  check_flag(output_filtered_array, stomach_flag, small_bowel_flag, colon_flag )
-                      
-                        check_1, check_2, check_3 = image_save(output_filtered_array, stomach_flag, small_bowel_flag, colon_flag, pred_label, check_1, check_2, check_3, savePath, fname, frame_index , frame, result_frame )
+                        
+                        
+                        check_1, check_2, check_3, result_frame = image_save(output_filtered_array, stomach_flag, small_bowel_flag, colon_flag, pred_label, check_1, check_2, check_3, savePath, fname, frame_index , frame, result_frame )
                         
                         if check_3:
                             break
                        
-
+                       
                         check = False
                         inputs_images.clear()
 
@@ -302,8 +317,8 @@ def main(config):
                     key = cv2.waitKey(1) & 0xFF
                     if (key == 27):
                         break
-                
-                
+                        
+                wr.writerow(result_frame)
                 cap.release()
                 #out.release()
                 cv2.destroyAllWindows()

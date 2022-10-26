@@ -61,20 +61,20 @@ def main(config):
     ])
 
     device, device_ids = prepare_device(config['n_gpu'])
-
+    
     # build model architecture, then print to console
-    CRNN_model = config.init_obj('crnn_arch', module_arch, device=device)
-
+    CNN = config.init_obj('arch', module_arch)
+    
     logger.info('Loading checkpoint: {} ...'.format(config['test_resume']))
     checkpoint = torch.load(config['test_resume'])
     state_dict = checkpoint['state_dict']
 
-    CRNN_model.load_state_dict(state_dict, strict=False)
+    CNN.load_state_dict(state_dict, strict=False)
     if len(device_ids) > 1:
-        CRNN_model = torch.nn.DataParallel(CRNN_model, device_ids=device_ids)
+        CNN = torch.nn.DataParallel(CNN, device_ids=device_ids)
 
-    CRNN_model = CRNN_model.to(device)
-    CRNN_model.eval()
+    CNN = CNN.to(device)
+    CNN.eval()
 
     label_map = getLabelMap(config)
     
@@ -85,8 +85,7 @@ def main(config):
     wr.writerow(['filename',"first_stomach", "first_small_bowel" , "first_colon" ])
     
    
-    
-    savePath = "./test_0615/"
+    savePath = "./test_0816_cnn/"
     
   
     # label_list = {"D2010":[653,	8361,	57816],
@@ -175,10 +174,14 @@ def main(config):
     "case9_normal":[308,	3470,	40600]
     }
 
+    
+   
     with torch.no_grad():
+       
         for root, _, fnames in sorted(os.walk(config['video_path'], followlinks=True)):
+            
             path_list = sorted(fnames)
-          
+           
             for num, fname in enumerate(path_list):
                 path = os.path.join(root, fname)
                 
@@ -190,7 +193,7 @@ def main(config):
                 small_bowel_flag = False
                 colon_flag = False
 
-                filename_new = "./test_results_0615/"+fname.split('.')[0] + "_result.csv"
+                filename_new = "./test_results_0816_cnn/"+fname.split('.')[0] + "_result.csv"
 
                 f_n = open(filename_new, 'w', newline='')
                 wr_n = csv.writer(f_n)
@@ -219,11 +222,7 @@ def main(config):
                 filename = fname.split(".")[0]
                 result_frame.append(filename)
                 
-                hidden_state = (
-                    torch.zeros(config["num_layer"], 1, config["hidden_size"]).to(device),  # (BATCH SIZE, SEQ_LENGTH, HIDDEN_SIZE)
-                    torch.zeros(config["num_layer"], 1, config["hidden_size"]).to(device)  # hidden state와 동일
-                )
-
+              
                 case_label =test_label_list.get(fname.split('.')[0])
                 inputs_images = []
                 check =False
@@ -232,89 +231,76 @@ def main(config):
                 while True: 
                     retval, frame = cap.read()
                     frame_index = int(frame_index) + 1
-
+                    
     
                     if not (retval):  # 프레임정보를 정상적으로 읽지 못하면
                         break  # while문을 빠져나가기
                     
                     
-                    if len(inputs_images) < config['clip_num'] and frame_index % 5 == 0:
-                        frame_index = format(int(frame_index), '06')
+                    if frame_index % 5 == 0:
 
-                        #cv2.imwrite("./test/"+frame_index+".jpg",frame)
                         color_cvt = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
                         pil_src = Image.fromarray(color_cvt)
-                        inputs = preprocess(pil_src)
-                        inputs_images.append(inputs)
-                        
-
-                    if len(inputs_images) == config['clip_num'] or num == (last_frame_count -1):
-                        
-                        check = True
-
-                    if check:
-                        if len(inputs_images) == 0:
-                            continue
-                        
-                        inputs_torch_images = torch.stack(inputs_images, dim=0)
-                        inputs_torch_images = inputs_torch_images.unsqueeze(0).to(device)
+                        inputs = preprocess(pil_src).unsqueeze(0).to(device)
                        
-                        output, hidden_state = CRNN_model(inputs_torch_images, hidden_state)
+                        output = CNN(inputs)
+                    
 
-                        outputs = torch.softmax(output, dim=2)
+                   
+                        frame_index = format(int(frame_index), '06')
 
-                        output = outputs.reshape(outputs.size(0) * outputs.size(1), -1)  # (batch * seq_len x classes)
-                        predicted = torch.argmax(output,dim = 1)
+                        output = torch.softmax(output, dim = 1)
+                        _, predicted = torch.max(output.data, 1)
 
                         pred_score = output.cpu().numpy().squeeze()    
 
                         index  = 1 
                     
 
-                        for pred, prob in zip(predicted, pred_score):
-                            result_list = []
-                           
-                            count = int(pre_frame_index) + index*5
-                            
-                            result_list.append(count)
-                           
-                            try:
-                                if len(prob) >2:
-                                    result_list.append(prob[0])
-                                    result_list.append(prob[1])
-                                    result_list.append(prob[2])
-                                else:
-                                    print(prob)
-                                    result_list.append(prob)
-                            except:
-                                print(prob)
-                                result_list.append(prob)
-
-                            result_list.append(pred.data.cpu().numpy())
-                             
-                            y_label = 0
-                            
-                            if len(case_label) >2:
-                                if count < case_label[0]:
-                                    y_label = -1
-                                elif count >= case_label[0] and count < case_label[1]:
-                                    y_label = 0
-                                elif count >= case_label[1] and count < case_label[2]:
-                                    y_label = 1
-                                else:
-                                    y_label = 2
+                       
+                        result_list = []
+                        
+                        count = int(pre_frame_index) + index*5
+                        
+                        result_list.append(count)
+                        
+                        try:
+                            if len(pred_score) >2:
+                                result_list.append(pred_score[0])
+                                result_list.append(pred_score[1])
+                                result_list.append(pred_score[2])
                             else:
-                                if count < case_label[0]:
-                                    y_label = -1
-                                elif count >= case_label[0] and count < case_label[1]:
-                                    y_label = 0
-                                else:
-                                    y_label = 1
+                                print(pred_score)
+                                result_list.append(pred_score)
+                        except:
+                            print(pred_score)
+                            result_list.append(pred_score)
 
-                            result_list.append(y_label)
+                        result_list.append(predicted.data.cpu().numpy()[0])
                             
-                            wr_n.writerow(result_list)
-                            index = index + 1
+                        y_label = 0
+                        
+                        if len(case_label) >2:
+                            if count < case_label[0]:
+                                y_label = -1
+                            elif count >= case_label[0] and count < case_label[1]:
+                                y_label = 0
+                            elif count >= case_label[1] and count < case_label[2]:
+                                y_label = 1
+                            else:
+                                y_label = 2
+                        else:
+                            if count < case_label[0]:
+                                y_label = -1
+                            elif count >= case_label[0] and count < case_label[1]:
+                                y_label = 0
+                            else:
+                                y_label = 1
+
+                        result_list.append(y_label)
+                        
+                        wr_n.writerow(result_list)
+                        index = index + 1
                             
                             
                         pre_frame_index = int(frame_index)     

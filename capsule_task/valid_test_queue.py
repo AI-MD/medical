@@ -83,12 +83,23 @@ def main(config):
     wr = csv.writer(f)
     wr.writerow(['filename',"first_stomach", "first_small_bowel" , "first_colon" ])
     
-    savePath = "./0603_queue_valid/"
-
+    savePath = "./test_0816/"
     
-    savePath = "./test_0603/"
+    savePath = "./test_0816_cnn/"
     
   
+    # label_list = {"D2010":[653,	8361,	57816],
+    #             "D2021": [592,	10460,	65405],
+    #              "KNUH6060":[160,	2573,	69535],
+    #              "KNUH6075":[160,	5949,	86669],
+    #             "case26": [407,	5022,	100220],
+    #              "case28":[64,	13985,	67035],
+    #              "case29":[210,	3609,	47700],
+    #              "case30":[1,	8870,	45249],
+    #              "duh1":[400,	5745,	50375],
+    #             "duh2": [137,	3110,	94200]
+    #             }
+
     with torch.no_grad():
         for root, _, fnames in sorted(os.walk(config['video_path'], followlinks=True)):
             path_list = sorted(fnames)
@@ -104,12 +115,11 @@ def main(config):
                 small_bowel_flag = False
                 colon_flag = False
 
+                # filename_new = "./valid_mean_results_0609/"+fname.split('.')[0] + "_resultforMean.csv"
 
-                filename_new = "./valid_mean_results_0603/"+fname.split('.')[0] + "_resultforMean.csv"
-
-                f_n = open(filename_new, 'w', newline='')
-                wr_n = csv.writer(f_n)
-                wr_n.writerow(["index", "0_mean" , "1_mean" , "2_mean" ])
+                # f_n = open(filename_new, 'w', newline='')
+                # wr_n = csv.writer(f_n)
+                # wr_n.writerow(["index", "0_mean" , "1_mean" , "2_mean",  "label", "prediction" ])
 
                 cap = cv2.VideoCapture(path)
                 fps = cap.get(cv2.CAP_PROP_FPS)
@@ -133,15 +143,27 @@ def main(config):
                 result_frame.append(filename)
                 
                 hidden_state = (
-                    torch.zeros(config["num_layer"], config["embed_size"], config["hidden_size"]).to(device),  # (BATCH SIZE, SEQ_LENGTH, HIDDEN_SIZE)
-                    torch.zeros(config["num_layer"], config["embed_size"], config["hidden_size"]).to(device)  # hidden state와 동일
+                    torch.zeros(config["num_layer"], 1, config["hidden_size"]).to(device),  # (BATCH SIZE, SEQ_LENGTH, HIDDEN_SIZE)
+                    torch.zeros(config["num_layer"], 1, config["hidden_size"]).to(device)  # hidden state와 동일
                 )
-              
+
+                #case_label =label_list.get(fname.split('.')[0])
+                
                 while True:
                     retval, frame = cap.read()
                     frame_index = int(frame_index) + 1
 
+                    # y_label = 0
                     
+                    # if frame_index < case_label[0]:
+                    #   y_label = -1
+                    # elif frame_index >= case_label[0] and frame_index < case_label[1]:
+                    #    y_label = 0
+                    # elif frame_index >= case_label[1] and frame_index < case_label[2]:
+                    #    y_label = 1
+                    # else:
+                    #    y_label = 2
+
                     if not (retval):  # 프레임정보를 정상적으로 읽지 못하면
                         break  # while문을 빠져나가기
 
@@ -168,21 +190,21 @@ def main(config):
 
                         pred_idx = np.argmax(pred_mean_array)
                         
-                    
-                        wr_mean = []
-                        wr_mean.append(frame_index)
-                        wr_mean.append(pred_mean_array[0])
-                        wr_mean.append(pred_mean_array[1])
-                        wr_mean.append(pred_mean_array[2])
-                      
-                        wr_n.writerow(wr_mean)
-                        
-                        if np.max(pred_mean_array) < config['threshold']:
-                          continue        
+                        result_list = []
+                        result_list.append(frame_index)
+                        result_list.append(pred_mean_array[0])
+                        result_list.append(pred_mean_array[1])
+                        result_list.append(pred_mean_array[2])
+                        result_list.append(y_label)
+                        result_list.append(pred_idx)
+                        wr_n.writerow(result_list)
+
+                        # if np.max(pred_mean_array) < config['threshold']:
+                        #   continue        
                              
                         #print("--------------------------------")
                        
-
+                        
                         if pred_idx ==0:
                             stomach_flag = True
                         if pred_idx == 1 and stomach_flag:

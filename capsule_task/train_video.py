@@ -49,20 +49,33 @@ def main(config):
 
     # check Automatic mixed precision
     use_amp = config['use_amp']
-
+    
     # get function handles of loss and metrics
     criterion = getattr(module_loss, config['loss'])
-
-    # criterion = config.init_obj('loss', module_loss)
+   
+    #criterion = config.init_obj('loss', module_loss)
     metrics = [getattr(module_metric, met) for met in config['metrics']]
 
     # build optimizer, learning rate scheduler. delete every lines containing lr_scheduler for disabling scheduler
-    # trainable_params = filter(lambda p: p.requires_grad, Decoder_model.parameters())
-    # base_optimizer = torch.optim.SGD
-    # optimizer = config.init_obj('optimizer', module_optim, trainable_params, base_optimizer)
-
-    optimizer = torch.optim.Adam(CRNN_model.parameters(), lr=0.01)
+    trainable_params = filter(lambda p: p.requires_grad, CRNN_model.parameters())
+    base_optimizer = torch.optim.SGD
+    optimizer = config.init_obj('optimizer', module_optim, trainable_params, base_optimizer)
+    #optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     lr_scheduler = config.init_obj('lr_scheduler', torch.optim.lr_scheduler, optimizer)
+
+    # # get function handles of loss and metrics
+    # criterion = getattr(module_loss, config['loss'])
+
+    # # criterion = config.init_obj('loss', module_loss)
+    # metrics = [getattr(module_metric, met) for met in config['metrics']]
+
+    # # build optimizer, learning rate scheduler. delete every lines containing lr_scheduler for disabling scheduler
+    # # trainable_params = filter(lambda p: p.requires_grad, Decoder_model.parameters())
+    # # base_optimizer = torch.optim.SGD
+    # # optimizer = config.init_obj('optimizer', module_optim, trainable_params, base_optimizer)
+
+    # optimizer = torch.optim.Adam(CRNN_model.parameters(), lr=0.01)
+    # lr_scheduler = config.init_obj('lr_scheduler', torch.optim.lr_scheduler, optimizer)
 
     model = CRNN_model
 
