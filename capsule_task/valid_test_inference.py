@@ -117,7 +117,6 @@ def image_save(output_filtered_array, stomach_flag, small_bowel_flag, colon_flag
     return check_1, check_2, check_3, result_frame
 
 
-
 def main(config):
     logger = config.get_logger('test')
 
@@ -153,7 +152,6 @@ def main(config):
     wr.writerow(['filename',"first_stomach", "first_small_bowel" , "first_colon" ])
     
    
-    
     savePath = "./valid_0816_cnn/"
     
     N =  config['gaussian_size']
@@ -285,9 +283,7 @@ def main(config):
                        
                         for idx, x in enumerate(pred_prob_array.T):
                             pred_prob_gas[:, idx]= gaussian_filter1d(x, N)
-                        
-                       
-                        
+    
                         pred_idx_array_gas = np.argmax(pred_prob_gas, 1)
                        
                         output_filtered_array = pred_idx_array_gas[-(config['clip_num']+1):-1]

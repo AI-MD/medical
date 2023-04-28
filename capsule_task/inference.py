@@ -185,9 +185,7 @@ def cls_inference(config, logger, cls_preds):
 def main(config):
     logger = config.get_logger('test')
 
-    """
-    PNI Classification
-    """
+   
     cls_preds = []
     
     #os.mkdir(config['cls_noisy_result'])

@@ -16,8 +16,6 @@ import csv
 import pathlib
 import numpy as np
 from queue import Queue
-
-
 import sklearn.metrics as metrics
 
 temp = pathlib.PosixPath

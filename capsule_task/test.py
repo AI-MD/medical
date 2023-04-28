@@ -37,7 +37,8 @@ def main(config):
     # build model architecture
     model = config.init_obj('arch', module_arch)
     logger.info(model)
-
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    
     # get function handles of loss and metrics
     #loss_fn = config.init_obj('loss', module_loss)
     loss_fn = getattr(module_loss, config['loss'])
@@ -46,19 +47,15 @@ def main(config):
     logger.info('Loading checkpoint: {} ...'.format(config['resume']))
     checkpoint = torch.load(config['resume'])
     state_dict = checkpoint['state_dict']
-
+   
     if config['n_gpu'] > 1:
         model = torch.nn.DataParallel(model)
-    model.load_state_dict(state_dict)
+    model.load_state_dict(state_dict,strict=False)
     logger.info(model)
     # prepare model for testing
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = model.to(device)
     model.eval()
-
-
-
-
 
     # prepare gradcam
     # gradcam = GradCam(
@@ -81,7 +78,6 @@ def main(config):
     # cam_dict['efficientnet'] = [efficientnet_gradcam, efficientnet_gradcampp]
     #
     # gradcam, gradcam_pp = cam_dict['efficientnet']
-
 
 
     total_loss = 0.0
@@ -117,21 +113,21 @@ def main(config):
 
         grad_images = []
 
-        for img, path, label, pred in zip(data, paths, target, predicted):
+        # for img, path, label, pred in zip(data, paths, target, predicted):
             
-            if pred != label:
-                print(path)
-                count = count+1
-                print(count)
-                dir_name, file_name = os.path.split(path)
-                sub_dir_name, sub_root_name = os.path.split(dir_name)
-                img_path = os.path.join(sub_root_name, file_name)
+            #if pred != label:
+            #     print(path)
+            #     count = count+1
+            #     print(count)
+            #     dir_name, file_name = os.path.split(path)
+            #     sub_dir_name, sub_root_name = os.path.split(dir_name)
+            #     img_path = os.path.join(sub_root_name, file_name)
 
-                cls_dest_path = os.path.join(temp_path, class_names[pred])
-                os.makedirs(cls_dest_path, exist_ok=True)
+            #     cls_dest_path = os.path.join(temp_path, class_names[pred])
+            #     os.makedirs(cls_dest_path, exist_ok=True)
 
-                dest_image_path = os.path.join(cls_dest_path, img_path)
-                os.makedirs(os.path.join(cls_dest_path, sub_root_name), exist_ok=True)
+            #     dest_image_path = os.path.join(cls_dest_path, img_path)
+            #     os.makedirs(os.path.join(cls_dest_path, sub_root_name), exist_ok=True)
 
                 #shutil.copy(path, dest_image_path)
 
@@ -196,8 +192,6 @@ def main(config):
         #     else:
         #         pass
         #     t_pred[pred] += 1
-
-
 
     log = {'loss': total_loss / n_samples}
     log.update({

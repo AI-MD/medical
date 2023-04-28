@@ -1,7 +1,9 @@
+import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from torch import Tensor
 from base import BaseModel
-from model.module import *
+
 import torch.utils.model_zoo as model_zoo
 import timm
 

@@ -46,6 +46,9 @@ def main(config):
 
     if len(device_ids) > 1:
         CRNN_model = torch.nn.DataParallel(CRNN_model, device_ids=device_ids)
+    
+     
+
     # check Automatic mixed precision
     use_amp = config['use_amp']
    # get function handles of loss and metrics

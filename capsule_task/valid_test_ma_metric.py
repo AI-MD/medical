@@ -197,25 +197,7 @@ def main(config):
                         
                         pred_mean_array = np.mean(pred_prob_array, axis = 0)       
                        
-                        #print(pred_mean_array)
-                       
-                        # if np.max(pred_mean_array) < 0.5:
-                        #     print(np.max(pred_mean_array))
-                        #     pred_prob_list = pred_prob[len(pred_prob)-config['ma_clip']+1:]
-                        #     pred_prob.clear()
-                        #     continue        
-                            
-                        # print("0 count : ",pred_idx_array.count(0))
-                        # print("1 count : ",pred_idx_array.count(1))
-                        # print("2 count : ",pred_idx_array.count(2))
-
-                        # result_list = []
-                        # result_list.append(frame_index)
-                        # result_list.append(pred_mean_array[0])
-                        # result_list.append(pred_mean_array[1])
-                        # result_list.append(pred_mean_array[2])
-                        # result_list.append(y_label)
-                        # wr_n.writerow(result_list)
+                        
                         
                         print("--------------------------------")
                         

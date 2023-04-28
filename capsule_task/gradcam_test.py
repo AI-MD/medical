@@ -89,7 +89,6 @@ def main(config):
     label_name =config['image_path'].split("/")[-2]
     predict_name = config['image_path'].split("/")[-3]
 
-
     for num, img in enumerate(images):
         image = Image.open(os.path.abspath(img)).convert('RGB')
         base = os.path.basename(os.path.abspath(img))

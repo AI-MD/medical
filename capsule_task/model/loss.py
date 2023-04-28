@@ -4,6 +4,7 @@ import torch.nn.functional as F
 from torch.autograd import Variable
 
 import numpy as np
+
 def VideoCrossEntropyLoss(output, target):
     return F.cross_entropy(output, target)
 
